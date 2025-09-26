@@ -3,16 +3,20 @@ import { useEffect, useState } from "react";
 import Button from "../core/Button";
 import { LogOut } from "lucide-react";
 
+interface User {
+  username: string;
+  email: string;
+  role: string;
+}
+
 export default function Header() {
-  const [user, setUser] = useState<{ email: string; role: string } | null>(
-    null
-  );
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
-      console.log("Loaded user:", storedUser); // 👈 энд юу хадгалагдсан байгааг хар
-      setUser(JSON.parse(storedUser));
+      const parsed: User = JSON.parse(storedUser);
+      setUser(parsed);
     }
   }, []);
 
@@ -20,7 +24,8 @@ export default function Header() {
     <header className="bg-white shadow-md px-8 py-4 flex justify-between items-center">
       <h2 className="text-2xl font-bold text-gray-700 pl-[72px]">Dashboard</h2>
       <div className="flex items-center space-x-4">
-        <span className="text-gray-500">{user ? user.email : "Guest"}</span>
+        {/* Logout хажууд зөвхөн username харуулах */}
+        <span className="text-gray-500">{user ? user.username : "Guest"}</span>
         <Button
           onClick={() => {
             localStorage.removeItem("user");

@@ -1,4 +1,4 @@
-export type Priority = "High" | "Medium" | "Low";
+export type Priority = "Extremely" | "Moderate" | "Low";
 export type Status = "Completed" | "In Progress" | "Not Completed";
 
 export interface Task {
@@ -7,7 +7,9 @@ export interface Task {
   description: string;
   priority: Priority;
   status: Status;
-  createdDate: string; // ISO string
+  createdDate: string;
+  completedDate?: string;
+  imageUrl?: string;
 }
 
 export const mockTasks: Task[] = [
@@ -15,24 +17,38 @@ export const mockTasks: Task[] = [
     id: 1,
     name: "Design Homepage",
     description: "Create the homepage design for the new app",
-    priority: "High",
+    priority: "Extremely",
     status: "In Progress",
     createdDate: new Date().toISOString(),
+    imageUrl: "/ach3 1.png",
   },
   {
     id: 2,
     name: "Setup Database",
     description: "Install MySQL and setup initial tables",
-    priority: "Medium",
+    priority: "Moderate",
     status: "Not Completed",
     createdDate: new Date().toISOString(),
+    imageUrl: "/ach3 2.png",
   },
   {
     id: 3,
     name: "Implement Login",
     description: "Create login page and connect with fake backend",
-    priority: "High",
+    priority: "Extremely",
     status: "Completed",
     createdDate: new Date().toISOString(),
+    completedDate: new Date().toISOString(),
+    imageUrl: "/ach3 3.png",
+  },
+  {
+    id: 4,
+    name: "Implement Dashboard",
+    description: "Create dashboard for admin panel",
+    priority: "Extremely",
+    status: "Completed",
+    createdDate: new Date().toISOString(),
+    completedDate: new Date().toISOString(),
+    imageUrl: "/ach3 4.png",
   },
 ];

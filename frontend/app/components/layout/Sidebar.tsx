@@ -1,20 +1,20 @@
-// components/Sidebar.tsx
 "use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import cn from "classnames";
+import { FileCheck, Home, LayoutDashboard, List } from "lucide-react"; // icons
 
 export default function Sidebar() {
   const pathname = usePathname();
 
   const links = [
-    { href: "/", label: "Dashboard" },
-    { href: "/tasks", label: "Tasks" },
+    { href: "/", label: "Dashboard", icon: <LayoutDashboard size={24} /> },
+    { href: "/tasks", label: "Tasks", icon: <FileCheck size={24} /> },
   ];
 
   return (
-    <aside className="w-64 min-h-screen bg-[#FF6767] text-white p-6 flex flex-col rounded-r-2xl">
+    <aside className="w-[365px] min-h-screen bg-[#FF6767] text-white p-6 flex flex-col rounded-r-2xl">
       <nav className="flex-1">
         <ul>
           {links.map((link) => (
@@ -22,12 +22,13 @@ export default function Sidebar() {
               <Link
                 href={link.href}
                 className={cn(
-                  "block mb-4 p-3 rounded-lg transition-colors",
+                  "flex items-center gap-2 mb-4 p-3 rounded-lg transition-colors",
                   pathname === link.href
                     ? "bg-white text-red-500 font-semibold"
                     : "hover:bg-white hover:text-red-500"
                 )}
               >
+                {link.icon && <span>{link.icon}</span>}
                 {link.label}
               </Link>
             </li>
