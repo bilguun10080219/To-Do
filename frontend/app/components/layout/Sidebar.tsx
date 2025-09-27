@@ -11,6 +11,9 @@ export default function Sidebar() {
   const links = [
     { href: "/", label: "Dashboard", icon: <LayoutDashboard size={24} /> },
     { href: "/tasks", label: "Tasks", icon: <FileCheck size={24} /> },
+    { href: "/categories", label: "Task Categories", icon: <List size={20} /> },
+    { href: "/settings", label: "Settings", icon: <Home size={20} /> },
+    { href: "/help", label: "Help", icon: <Home size={20} /> },
   ];
 
   return (
