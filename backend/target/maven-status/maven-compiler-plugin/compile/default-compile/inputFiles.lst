@@ -1,0 +1,16 @@
+/Users/bulgan/Documents/to-do-app/backend/src/main/java/com/todo/backend/TodoBackendApplication.java
+/Users/bulgan/Documents/to-do-app/backend/src/main/java/com/todo/backend/config/SecurityConfig.java
+/Users/bulgan/Documents/to-do-app/backend/src/main/java/com/todo/backend/controller/AuthController.java
+/Users/bulgan/Documents/to-do-app/backend/src/main/java/com/todo/backend/controller/TaskController.java
+/Users/bulgan/Documents/to-do-app/backend/src/main/java/com/todo/backend/dto/LoginRequest.java
+/Users/bulgan/Documents/to-do-app/backend/src/main/java/com/todo/backend/dto/LoginResponse.java
+/Users/bulgan/Documents/to-do-app/backend/src/main/java/com/todo/backend/dto/RegisterRequest.java
+/Users/bulgan/Documents/to-do-app/backend/src/main/java/com/todo/backend/entity/Task.java
+/Users/bulgan/Documents/to-do-app/backend/src/main/java/com/todo/backend/entity/User.java
+/Users/bulgan/Documents/to-do-app/backend/src/main/java/com/todo/backend/repository/TaskRepository.java
+/Users/bulgan/Documents/to-do-app/backend/src/main/java/com/todo/backend/repository/UserRepository.java
+/Users/bulgan/Documents/to-do-app/backend/src/main/java/com/todo/backend/security/CustomUserDetailsService.java
+/Users/bulgan/Documents/to-do-app/backend/src/main/java/com/todo/backend/security/JwtAuthenticationFilter.java
+/Users/bulgan/Documents/to-do-app/backend/src/main/java/com/todo/backend/security/JwtUtil.java
+/Users/bulgan/Documents/to-do-app/backend/src/main/java/com/todo/backend/service/TaskService.java
+/Users/bulgan/Documents/to-do-app/backend/src/main/java/com/todo/backend/service/UserService.java
