@@ -16,7 +16,8 @@ export const mockTasks: Task[] = [
   {
     id: 1,
     name: "Design Homepage",
-    description: "Create the homepage design for the new app",
+    description:
+      "Create the homepage design for the new app, including a clean and modern layout, intuitive navigation bar, hero section with a clear call-to-action, and responsive design for both desktop and mobile. Ensure that the color scheme follows the brand guidelines and typography is consistent across all sections. Also, prepare reusable UI components such as buttons, cards, and modals for future development.",
     priority: "Extremely",
     status: "In Progress",
     createdDate: new Date().toISOString(),
@@ -29,7 +30,7 @@ export const mockTasks: Task[] = [
     priority: "Moderate",
     status: "Not Completed",
     createdDate: new Date().toISOString(),
-    imageUrl: "/ach3 2.png",
+    imageUrl: "/ach3 1.png",
   },
   {
     id: 3,
@@ -39,7 +40,7 @@ export const mockTasks: Task[] = [
     status: "Completed",
     createdDate: new Date().toISOString(),
     completedDate: new Date().toISOString(),
-    imageUrl: "/ach3 3.png",
+    imageUrl: "/ach3 1.png",
   },
   {
     id: 4,
@@ -49,6 +50,6 @@ export const mockTasks: Task[] = [
     status: "Completed",
     createdDate: new Date().toISOString(),
     completedDate: new Date().toISOString(),
-    imageUrl: "/ach3 4.png",
+    imageUrl: "/ach3 1.png",
   },
 ];

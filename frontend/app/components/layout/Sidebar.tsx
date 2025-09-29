@@ -17,7 +17,7 @@ export default function Sidebar() {
   ];
 
   return (
-    <aside className="w-[365px] min-h-screen bg-[#FF6767] text-white p-6 flex flex-col rounded-r-2xl">
+    <aside className="w-fit min-h-screen bg-[#FF6767] text-white p-6 flex flex-col rounded-r-2xl">
       <nav className="flex-1">
         <ul>
           {links.map((link) => (

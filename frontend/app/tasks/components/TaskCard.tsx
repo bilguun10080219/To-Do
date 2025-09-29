@@ -9,7 +9,7 @@ interface TaskCardProps {
   task: Task;
   imageUrl?: string; // шинэ prop
   onClick?: MouseEventHandler<HTMLDivElement>;
- }
+}
 
 export default function TaskCard({ task, imageUrl, onClick }: TaskCardProps) {
   const mapPriorityColor = (priority: string) => {
@@ -28,17 +28,17 @@ export default function TaskCard({ task, imageUrl, onClick }: TaskCardProps) {
   const mapStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case "completed":
-        return "text-green-600";
+        return "text-[#05A301]";
       case "in progress":
-        return "text-blue-600";
+        return "text-[#0225FF]";
       case "not completed":
-        return "text-red-600";
+        return "text-[#F21E1E]";
       default:
         return "text-gray-500";
     }
   };
   const router = useRouter();
-    const handleClick = () => {
+  const handleClick = () => {
     router.push(`/tasks/${task.id}`);
   };
   return (
@@ -47,55 +47,57 @@ export default function TaskCard({ task, imageUrl, onClick }: TaskCardProps) {
       onClick={handleClick}
       style={{ cursor: "pointer" }}
     >
-    <div className="flex flex-row p-4 border rounded-lg hover:shadow transition relative gap-4">
-      {/* Priority Circle */}
-      <div
-        className={cn(
-          "w-4 h-4 rounded-full absolute top-4 left-4 border-2 bg-white",
-          {
-            "border-red-500": task.priority === "Extremely",
-            "border-[#42ADE2]": task.priority === "Moderate",
-            "border-green-500": task.priority === "Low",
-          }
+      <div className="flex flex-row p-4 border rounded-lg hover:shadow transition relative gap-4">
+        {/* Priority Circle */}
+        <div
+          className={cn(
+            "w-4 h-4 rounded-full absolute top-4 left-4 border-2 bg-white",
+            {
+              "border-[#F21E1E]": task.status === "Not Completed",
+              "border-[#0225FF]": task.status === "In Progress",
+              "border-[#05A301]": task.status === "Completed",
+            }
+          )}
+        ></div>
+
+        {/* Тайлбар хэсэг */}
+        <div className="flex-1 flex flex-col">
+          <div className="flex justify-between items-center mb-2 pl-6">
+            <h3 className="text-lg font-medium">{task.name}</h3>
+          </div>
+
+          <p className="text-gray-600 mb-2 pl-6 line-clamp-4">
+            {task.description}
+          </p>
+
+          <div className="flex justify-between text-[10px] text-sm items-center gap-4 pl-6">
+            <div>
+              Priority:{" "}
+              <span className={cn(mapPriorityColor(task.priority))}>
+                {task.priority}
+              </span>
+            </div>
+            <div>
+              Status:{" "}
+              <span className={cn(mapStatusColor(task.status))}>
+                {task.status}
+              </span>
+            </div>
+            <span className="text-gray-400">
+              Created on: {new Date(task.createdDate).toLocaleDateString()}
+            </span>
+          </div>
+        </div>
+        {/* Зураг */}
+        {imageUrl && (
+          <img
+            src={imageUrl}
+            alt={task.name}
+            className="w-22 h-22 object-cover rounded-lg flex-shrink-0"
+            style={{ width: 88, height: 88 }}
+          />
         )}
-      ></div>
-
-      {/* Тайлбар хэсэг */}
-      <div className="flex-1 flex flex-col">
-        <div className="flex justify-between items-center mb-2 pl-6">
-          <h3 className="text-lg font-medium">{task.name}</h3>
-        </div>
-
-        <p className="text-gray-600 mb-2 pl-6">{task.description}</p>
-
-        <div className="flex justify-between text-sm items-center gap-4 pl-6">
-          <div>
-            Priority:{" "}
-            <span className={cn(mapPriorityColor(task.priority))}>
-              {task.priority}
-            </span>
-          </div>
-          <div>
-            Status:{" "}
-            <span className={cn(mapStatusColor(task.status))}>
-              {task.status}
-            </span>
-          </div>
-          <span className="text-gray-400">
-            Created on: {new Date(task.createdDate).toLocaleDateString()}
-          </span>
-        </div>
       </div>
-      {/* Зураг */}
-      {imageUrl && (
-        <img
-          src={imageUrl}
-          alt={task.name}
-          className="w-22 h-22 object-cover rounded-lg flex-shrink-0"
-          style={{ width: 88, height: 88 }}
-        />
-      )}
     </div>
-   </div>
   );
 }
