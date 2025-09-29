@@ -58,13 +58,13 @@ export default function LoginPage() {
               />
             </FormItem>
 
-            <Button type="submit" className="w-full mt-4" disabled={loading}>
+            <Button type="submit" className=" mt-4" disabled={loading}>
               {loading ? "Logging in..." : "Login"}
             </Button>
             <Button
               type="button"
               variant="secondary"
-              className="w-full mt-2"
+              className="mt-2"
               onClick={() => router.push("/register")}
             >
               Register

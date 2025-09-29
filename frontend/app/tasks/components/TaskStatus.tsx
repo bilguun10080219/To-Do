@@ -30,7 +30,7 @@ export default function TaskStatus({
   mockTasks.forEach((task) => (counts[task.status] += 1));
 
   return (
-    <div className="bg-white shadow-2xs rounded-2xl p-6 h-fit">
+    <div className="bg-white shadow-md rounded-2xl p-6 h-fit">
       {/* Title */}
       <div className="flex items-center gap-2 mb-4 text-[#FF6767] font-semibold text-lg">
         <FileCheck2 className="w-5 h-5 text-gray-700" />
