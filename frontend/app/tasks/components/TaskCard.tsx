@@ -2,13 +2,16 @@
 
 import { Task } from "@/app/mock/tasks";
 import cn from "classnames";
+import { MouseEventHandler } from "react";
+import { useRouter } from "next/navigation";
 
 interface TaskCardProps {
   task: Task;
   imageUrl?: string; // шинэ prop
-}
+  onClick?: MouseEventHandler<HTMLDivElement>;
+ }
 
-export default function TaskCard({ task, imageUrl }: TaskCardProps) {
+export default function TaskCard({ task, imageUrl, onClick }: TaskCardProps) {
   const mapPriorityColor = (priority: string) => {
     switch (priority) {
       case "Extremely":
@@ -34,8 +37,16 @@ export default function TaskCard({ task, imageUrl }: TaskCardProps) {
         return "text-gray-500";
     }
   };
-
+  const router = useRouter();
+    const handleClick = () => {
+    router.push(`/tasks/${task.id}`);
+  };
   return (
+    <div
+      className="task-card"
+      onClick={handleClick}
+      style={{ cursor: "pointer" }}
+    >
     <div className="flex flex-row p-4 border rounded-lg hover:shadow transition relative gap-4">
       {/* Priority Circle */}
       <div
@@ -85,5 +96,6 @@ export default function TaskCard({ task, imageUrl }: TaskCardProps) {
         />
       )}
     </div>
+   </div>
   );
 }
