@@ -30,10 +30,10 @@ export default function Layout({ children, className }: LayoutProps) {
     >
       <Header />
 
-      <div className="flex-1 flex flex-row gap-[76px]">
+      <div className="flex-1 flex flex-row">
         <div className="flex flex-row w-full">
           <Sidebar />
-          <div className="flex flex-row flex-1 gap-[34px]">
+          <div className="mx-[76px] flex flex-row flex-1 gap-[34px]">
             <main className="flex flex-col w-full items-start gap-3 p-4">
               <span className="font-medium text-4xl">
                 Welcome back, {username}
