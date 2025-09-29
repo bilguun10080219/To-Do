@@ -4,13 +4,13 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
-import { mockTasks } from "@/app/mock/tasks"; 
+import { mockTasks } from "@/app/mock/tasks";
 import { FaEdit, FaTrash } from "react-icons/fa";
-import EditTask from "@/app/components/task/EditTask"; 
+import EditTask from "@/app/components/task/EditTask";
 
 export default function ViewTask() {
   const { id } = useParams();
-  const task = mockTasks.find((t) => t.id === Number(id)); 
+  const task = mockTasks.find((t) => t.id === Number(id));
 
   const [isEditing, setIsEditing] = useState(false);
 
@@ -25,16 +25,42 @@ export default function ViewTask() {
     }
   };
 
+  // Priority өнгө
+  const mapPriorityColor = (priority: string) => {
+    switch (priority) {
+      case "Extremely":
+        return "text-red-500";
+      case "Moderate":
+        return "text-[#42ADE2]";
+      case "Low":
+        return "text-green-500";
+      default:
+        return "text-gray-500";
+    }
+  };
+
+  // Status өнгө
+  const mapStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+      case "completed":
+        return "text-green-600";
+      case "in progress":
+        return "text-blue-600";
+      case "not completed":
+        return "text-red-600";
+      default:
+        return "text-gray-500";
+    }
+  };
+
   return (
-    <div className="my-5 w-full rounded-2xl border shadow-2xl flex flex-col bg-white">
+    <div className="my-5 w-full rounded-2xl border shadow-2xl flex flex-col ">
       <div key={task.id} className="flex min-h-[calc(100vh-120px)] flex-col">
-  
         <div className="m-3 flex justify-end">
           <Link href="/tasks" className="cursor-pointer font-semibold">
             Go Back
           </Link>
         </div>
-
 
         <div className="p-5">
           <div className="flex flex-col items-center gap-5 sm:flex-row sm:items-start">
@@ -51,13 +77,17 @@ export default function ViewTask() {
               <h1 className="text-xl font-semibold sm:text-2xl">{task.name}</h1>
               <p>
                 Priority:{" "}
-                <span className="text-priority-moderate font-semibold">
+                <span
+                  className={`${mapPriorityColor(task.priority)} font-semibold`}
+                >
                   {task.priority}
                 </span>
               </p>
               <p>
                 Status:{" "}
-                <span className="text-status-notstarted font-semibold">
+                <span
+                  className={`${mapStatusColor(task.status)} font-semibold`}
+                >
                   {task.status}
                 </span>
               </p>
@@ -67,7 +97,6 @@ export default function ViewTask() {
             </div>
           </div>
         </div>
-
 
         <div className="text-text-muted px-4 pt-4 pb-6 text-lg sm:px-6">
           <p className="mb-4">{task.description}</p>
@@ -91,7 +120,7 @@ export default function ViewTask() {
 
       {isEditing && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-            <EditTask task={task} onClose={() => setIsEditing(false)} />          
+          <EditTask task={task} onClose={() => setIsEditing(false)} />
         </div>
       )}
     </div>

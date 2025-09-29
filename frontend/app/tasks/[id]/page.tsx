@@ -11,11 +11,11 @@ export default function ViewTaskPage() {
 
   if (!task) return <p className="text-red-500">Task not found</p>;
 
-return (
-  <Layout>
-    <div className="w-screen max-w-[959px] min-h-screen">
-      <ViewTask />
-    </div>
-  </Layout>
-);
+  return (
+    <Layout>
+      <div className="flex w-full min-h-screen">
+        <ViewTask />
+      </div>
+    </Layout>
+  );
 }
