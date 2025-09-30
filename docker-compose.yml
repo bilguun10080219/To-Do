@@ -1,0 +1,23 @@
+services:
+  db:
+    image: mysql:8
+    container_name: todoapp-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: 99831878
+      MYSQL_DATABASE: todoapp
+    ports:
+      - "3307:3306"   # map to same port your Spring Boot uses
+    volumes:
+      - ./docker/todoapp.sql:/docker-entrypoint-initdb.d/todoapp.sql
+      - db_data:/var/lib/mysql
+
+  adminer:
+    image: adminer
+    container_name: todoapp-adminer
+    restart: unless-stopped
+    ports:
+      - "8081:8080"
+
+volumes:
+  db_data:
