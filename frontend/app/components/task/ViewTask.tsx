@@ -1,95 +1,87 @@
 "use client";
 
-import { useParams } from "next/navigation";
-import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
-import { useState } from "react";
-import { mockTasks } from "@/app/mock/tasks";
+import { useEffect, useState } from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import EditTask from "@/app/components/task/EditTask";
+import { Task } from "@/app/mock/tasks";
+import { deleteTask, getTasks } from "@/app/services/taskApi";
 
 export default function ViewTask() {
   const { id } = useParams();
-  const task = mockTasks.find((t) => t.id === Number(id));
-
+  const router = useRouter();
+  const [task, setTask] = useState<Task | null>(null);
   const [isEditing, setIsEditing] = useState(false);
 
-  if (!task) {
-    return <p className="text-red-500">Task not found</p>;
-  }
+  const fetchTask = async () => {
+    try {
+      const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+      const tasks = await getTasks(currentUser.username);
+      const t = tasks.find((t: Task) => t.id === Number(id));
+      setTask(t || null);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-  const handleDelete = () => {
+  useEffect(() => {
+    fetchTask();
+  }, [id]);
+
+  if (!task) return <p className="text-red-500">Task not found</p>;
+
+  const handleDelete = async () => {
     if (confirm("Are you sure you want to delete this task?")) {
-      console.log("Deleting task:", task.id);
-      //fetch(`/api/tasks/${task.id}`, { method: "DELETE" })
+      try {
+        const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+        await deleteTask(task.id!, currentUser.username);
+        router.push("/tasks");
+      } catch (err) {
+        console.error(err);
+        alert("Failed to delete task");
+      }
     }
   };
 
-  // Priority өнгө
-  const mapPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "Extremely":
-        return "text-red-500";
-      case "Moderate":
-        return "text-[#42ADE2]";
-      case "Low":
-        return "text-green-500";
-      default:
-        return "text-gray-500";
-    }
-  };
+  const mapPriorityColor = (priority: string) =>
+    priority === "Extremely" ? "text-red-500" : priority === "Moderate" ? "text-[#42ADE2]" : "text-green-500";
 
-  // Status өнгө
-  const mapStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "completed":
-        return "text-green-600";
-      case "in progress":
-        return "text-blue-600";
-      case "not completed":
-        return "text-red-600";
-      default:
-        return "text-gray-500";
-    }
-  };
+  const mapStatusColor = (status?: string) => {
+  const s = status?.toLowerCase() || "not completed"; // default if null
+  switch (s) {
+    case "completed":
+      return "text-green-600";
+    case "in progress":
+      return "text-blue-600";
+    case "not completed":
+      return "text-red-600";
+    default:
+      return "text-gray-500";
+  }
+};
 
   return (
     <div className="my-5 w-full rounded-2xl border shadow-2xl flex flex-col ">
       <div key={task.id} className="flex min-h-[calc(100vh-120px)] flex-col">
         <div className="m-3 flex justify-end">
-          <Link href="/tasks" className="cursor-pointer font-semibold">
+          <button onClick={() => router.push("/tasks")} className="cursor-pointer font-semibold">
             Go Back
-          </Link>
+          </button>
         </div>
 
         <div className="p-5">
           <div className="flex flex-col items-center gap-5 sm:flex-row sm:items-start">
             {task.imageUrl && (
-              <Image
-                src={task.imageUrl}
-                alt={task.name}
-                width={210}
-                height={217}
-                className="rounded-lg object-cover"
-              />
+              <Image src={task.imageUrl} alt={task.name} width={210} height={217} className="rounded-lg object-cover" />
             )}
             <div className="flex flex-col gap-2 text-center text-lg sm:text-left">
               <h1 className="text-xl font-semibold sm:text-2xl">{task.name}</h1>
               <p>
-                Priority:{" "}
-                <span
-                  className={`${mapPriorityColor(task.priority)} font-semibold`}
-                >
-                  {task.priority}
-                </span>
+                Priority: <span className={`${mapPriorityColor(task.priority)} font-semibold`}>{task.priority}</span>
               </p>
               <p>
-                Status:{" "}
-                <span
-                  className={`${mapStatusColor(task.status)} font-semibold`}
-                >
-                  {task.status}
-                </span>
+                Status: <span className={`${mapStatusColor(task.status)} font-semibold`}>{task.status}</span>
               </p>
               <p className="text-border">
                 Created on: {new Date(task.createdDate).toLocaleDateString()}
@@ -103,16 +95,10 @@ export default function ViewTask() {
         </div>
 
         <div className="mt-auto flex items-center justify-end gap-4 p-4">
-          <button
-            onClick={handleDelete}
-            className="rounded-lg bg-red-500 p-2 text-white hover:bg-red-600"
-          >
+          <button onClick={handleDelete} className="rounded-lg bg-red-500 p-2 text-white hover:bg-red-600">
             <FaTrash />
           </button>
-          <button
-            onClick={() => setIsEditing(true)}
-            className="rounded-lg bg-blue-500 p-2 text-white hover:bg-blue-600"
-          >
+          <button onClick={() => setIsEditing(true)} className="rounded-lg bg-blue-500 p-2 text-white hover:bg-blue-600">
             <FaEdit />
           </button>
         </div>
@@ -120,7 +106,7 @@ export default function ViewTask() {
 
       {isEditing && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <EditTask task={task} onClose={() => setIsEditing(false)} />
+          <EditTask task={task} onClose={() => setIsEditing(false)} onUpdated={fetchTask} />
         </div>
       )}
     </div>

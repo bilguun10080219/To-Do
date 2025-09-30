@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Task, Priority } from "@/app/mock/tasks"; 
+import { createTask } from "@/app/services/taskApi";
 
 interface AddTaskProps {
     onClose: () => void;
@@ -15,17 +16,26 @@ export default function AddTask({ onClose }: AddTaskProps) {
     const [description, setDescription] = useState("");
     const [image, setImage] = useState<File | null>(null);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        const currentUser = JSON.parse(localStorage.getItem("user") || "{}")
+
         const newTask: Partial<Task> = {
             name: title,
             createdDate,
             priority,
             description,
-            // image,
+            username: currentUser.username,
         };
-        console.log("Adding new task:", newTask);
-        onClose();
+        
+        try {
+            await createTask(newTask);
+            onClose();
+        } catch (err) {
+            console.error(err);
+            alert("Failed to add task");
+        }
+
     };
 
     return (

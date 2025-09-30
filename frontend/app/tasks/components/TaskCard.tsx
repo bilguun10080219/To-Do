@@ -25,8 +25,9 @@ export default function TaskCard({ task, imageUrl, onClick }: TaskCardProps) {
     }
   };
 
-  const mapStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
+  const mapStatusColor = (status?: string) => {
+    const s = status?.toLowerCase() || "not completed";
+    switch (s) {
       case "completed":
         return "text-[#05A301]";
       case "in progress":

@@ -1,35 +1,43 @@
 "use client";
 
 import { useState } from "react";
-import { Task } from "@/app/mock/tasks"; // mock-оос type авна
+import { Task, Priority } from "@/app/mock/tasks"; // mock-оос type авна
+import { updateTask } from "@/app/services/taskApi";
 
 interface EditTaskProps {
   task: Task;
   onClose: () => void;
+  onUpdated: () => void;
 }
 
 export default function EditTask({ task, onClose }: EditTaskProps) {
   const [title, setTitle] = useState(task.name);
-  const [createdDate, setCreatedDate] = useState(
-    task.createdDate.split("T")[0] 
-  );
-  const [priority, setPriority] = useState(task.priority);
+  const [createdDate, setCreatedDate] = useState(task.createdDate.split("T")[0] );
+  const [priority, setPriority] = useState<Priority>(task.priority);
   const [description, setDescription] = useState(task.description);
+  const [loading, setLoading] = useState(false);
   const [image, setImage] = useState<File | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const updatedTask = {
-      ...task,
-      name: title,
-      createdDate,
-      priority,
-      description,
-      // image,
-    };
-    console.log("Updating task:", updatedTask);
-    onClose();
+  const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+
+  const updatedTask = {
+    name: title,
+    createdDate,
+    priority,
+    description,
+    username: currentUser.username, 
   };
+
+  try {
+    await updateTask(task.id, updatedTask);
+    onClose();
+  } catch (err) {
+    console.error(err);
+    alert("Failed to update task");
+  }
+};
 
   return (
     <div className="bg-[#F9F9F9] w-[918px] h-[708px] rounded-md border border-gray-300 shadow-2xl p-8">
