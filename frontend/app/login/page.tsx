@@ -6,25 +6,37 @@ import Form from "../components/form/Form";
 import Button from "../components/core/Button";
 import Input from "../components/core/Input";
 import FormItem from "../components/form/FormItem";
-import { mockUsers } from "../mock/auth";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const foundUser = mockUsers.find(
-      (u) => u.email === email && u.password === password
-    );
+    setLoading(true);
 
-    if (foundUser) {
-      localStorage.setItem("user", JSON.stringify(foundUser));
-      router.push("/");
-    } else {
-      alert("Invalid email or password");
+    try {
+      const res = await fetch("http://localhost:8080/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (res.ok) {
+        const user = await res.json();
+        localStorage.setItem("user", JSON.stringify(user));
+        router.push("/");
+      } else {
+        const msg = await res.text();
+        alert(msg || "Invalid credentials");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error connecting to server");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -38,12 +50,12 @@ export default function LoginPage() {
           <div className="flex w-full flex-col gap-5 items-start">
             <h1 className="text-2xl font-semibold mb-6 text-center">Sign in</h1>
 
-            <FormItem label="Email">
+            <FormItem label="Username">
               <Input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter email"
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Enter username"
                 required
               />
             </FormItem>

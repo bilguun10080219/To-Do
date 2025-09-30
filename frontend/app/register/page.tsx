@@ -9,8 +9,7 @@ import Button from "../components/core/Button";
 
 export default function RegisterPage() {
   const router = useRouter();
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -18,8 +17,10 @@ export default function RegisterPage() {
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validation
     if (!agreeTerms) {
       alert("You must agree to the terms.");
       return;
@@ -28,14 +29,34 @@ export default function RegisterPage() {
       alert("Passwords do not match.");
       return;
     }
+    if (!username || !email || !password) {
+      alert("All fields are required.");
+      return;
+    }
 
     setLoading(true);
-    // mock registration logic
-    setTimeout(() => {
+
+    try {
+      const res = await fetch("http://localhost:8080/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, email, password }),
+      });
+
+      if (res.ok) {
+        const user = await res.json();
+        alert("Registration successful! You can now log in.");
+        router.push("/login");
+      } else {
+        const msg = await res.text();
+        alert(msg || "Registration failed");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error connecting to server");
+    } finally {
       setLoading(false);
-      alert("Registration successful!");
-      router.push("/login");
-    }, 1000);
+    }
   };
 
   return (
@@ -47,31 +68,12 @@ export default function RegisterPage() {
         <div className="flex flex-row justify-between">
           <img
             src="/ach3%201.png"
-            alt="Login illustration"
-            className="object-contain w-[613px] h-[613px]"
+            alt="Register illustration"
+            className="object-contain w-[400px] h-[400px]"
           />
+
           <div className="flex flex-col w-full items-start gap-2">
             <h1 className="text-2xl font-semibold mb-6 text-center">Sign Up</h1>
-
-            <FormItem label="First Name">
-              <Input
-                type="text"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                placeholder="First Name"
-                required
-              />
-            </FormItem>
-
-            <FormItem label="Last Name">
-              <Input
-                type="text"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                placeholder="Last Name"
-                required
-              />
-            </FormItem>
 
             <FormItem label="Username">
               <Input
