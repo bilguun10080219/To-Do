@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import Search from "../core/Search";
 
 interface User {
   username: string;
@@ -37,13 +38,32 @@ export default function Header() {
 
   const [first, second] = splitTitle(title);
 
+  // ✅ Search query-г хүлээн авах callback
+  const handleSearch = (query: string) => {
+    console.log("Search query:", query);
+    // эндээс /tasks API дуудаж filter хийж болно
+  };
+
   return (
-    <header className="bg-white min-h-[60px] shadow-md px-8 py-4 flex justify-between items-center">
+    <header className="bg-white min-h-[60px] shadow-md px-8 py-4 flex flex-row justify-between items-center">
       <h2 className="text-2xl font-bold pl-[72px]">
         <span className="text-[#FF6767]">{first}</span>
         <span className="text-black">{second}</span>
       </h2>
-      <div className="flex items-center space-x-4"></div>
+
+      {/* Search-д callback дамжуулж байна */}
+      <Search onSearch={handleSearch} />
+      <div className="flex flex-col items-end text-right ml-4">
+        {/* Дээд мөр: долоо хоногийн өдөр */}
+        <span className="text-black text-sm font-medium">
+          {new Date().toLocaleDateString("en-US", { weekday: "long" })}
+        </span>
+
+        {/* Доод мөр: огноо dd/mm/yyyy */}
+        <span className="text-[#3ABEFF] text-xs">
+          {new Date().toLocaleDateString("en-GB")}
+        </span>
+      </div>
     </header>
   );
 }
