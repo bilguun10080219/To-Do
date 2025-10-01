@@ -4,6 +4,7 @@ import React, { ReactNode, useEffect, useState } from "react";
 import cn from "classnames";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
+import { usePathname } from "next/navigation";
 
 interface LayoutProps {
   children: ReactNode;
@@ -12,6 +13,7 @@ interface LayoutProps {
 
 export default function Layout({ children, className }: LayoutProps) {
   const [username, setUsername] = useState<string>("");
+  const pathname = usePathname();
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -24,7 +26,7 @@ export default function Layout({ children, className }: LayoutProps) {
   return (
     <div
       className={cn(
-        "flex flex-col min-w-screen gap-[57px] bg-gray-100",
+        "flex flex-col min-w-screen min-h-screen gap-[57px] bg-gray-100",
         className
       )}
     >
@@ -35,9 +37,13 @@ export default function Layout({ children, className }: LayoutProps) {
           <Sidebar />
           <div className="mx-[76px] flex flex-row flex-1 gap-[34px]">
             <main className="flex flex-col w-full items-start gap-3 p-4">
-              <span className="font-medium text-4xl text-black">
-                Welcome back, {username}
-              </span>
+              {/* ✅ Зөвхөн Dashboard дээр welcome текст */}
+              {pathname === "/" && username && (
+                <span className="font-medium text-4xl text-black">
+                  Welcome back, {username}
+                </span>
+              )}
+
               {children}
             </main>
           </div>

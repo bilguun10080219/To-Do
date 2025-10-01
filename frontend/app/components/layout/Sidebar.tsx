@@ -3,22 +3,53 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import cn from "classnames";
-import { FileCheck, Home, LayoutDashboard, List } from "lucide-react"; // icons
+import {
+  FileCheck,
+  Home,
+  LayoutDashboard,
+  List,
+  LogOut,
+  User,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import Button from "../core/Button";
+
+interface UserData {
+  username: string;
+  email: string;
+  role: string;
+}
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const [user, setUser] = useState<UserData | null>(null);
+
+  useEffect(() => {
+    const match = document.cookie.match(/user=([^;]+)/);
+    if (match) setUser(JSON.parse(decodeURIComponent(match[1])));
+  }, []);
 
   const links = [
     { href: "/", label: "Dashboard", icon: <LayoutDashboard size={24} /> },
     { href: "/tasks", label: "Tasks", icon: <FileCheck size={24} /> },
     { href: "/categories", label: "Task Categories", icon: <List size={20} /> },
-    { href: "/settings", label: "Settings", icon: <Home size={20} /> },
-    { href: "/help", label: "Help", icon: <Home size={20} /> },
   ];
 
+  const handleLogout = () => {
+    // 1️⃣ localStorage устгах (хуучин кодыг хадгалах боломжтой)
+    localStorage.removeItem("user");
+
+    // 2️⃣ Cookie устгах
+    document.cookie = "user=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+
+    // 3️⃣ Login руу redirect хийх
+    window.location.href = "/login";
+  };
+
   return (
-    <aside className="w-fit min-h-screen bg-[#FF6767] text-white p-6 flex flex-col rounded-r-2xl">
-      <nav className="flex-1">
+    <aside className="w-64 max-h-screen bg-[#FF6767] text-white items-start p-6 flex flex-col rounded-r-2xl">
+      {/* Navigation хэсэг */}
+      <nav>
         <ul>
           {links.map((link) => (
             <li key={link.href}>
@@ -38,7 +69,15 @@ export default function Sidebar() {
           ))}
         </ul>
       </nav>
-      <div className="mt-auto text-sm opacity-80">v1.0.0</div>
+
+      <Button
+        onClick={handleLogout}
+        className="flex items-start gap-2 transition-colors px-3 py-2 rounded-lg w-full"
+        leftIcon={<LogOut />}
+      >
+        Logout
+      </Button>
+      <p className="mt-4 text-xs opacity-70">v1.0.0</p>
     </aside>
   );
 }
