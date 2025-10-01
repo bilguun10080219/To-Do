@@ -35,7 +35,7 @@ export default function Layout({ children, className }: LayoutProps) {
           <Sidebar />
           <div className="mx-[76px] flex flex-row flex-1 gap-[34px]">
             <main className="flex flex-col w-full items-start gap-3 p-4">
-              <span className="font-medium text-4xl">
+              <span className="font-medium text-4xl text-black">
                 Welcome back, {username}
               </span>
               {children}

@@ -35,6 +35,16 @@ public class TaskController {
         return ResponseEntity.ok(taskService.createTask(request, userOpt.get()));
     }
 
+    @GetMapping("/{id}")
+public ResponseEntity<?> getTaskById(@PathVariable Long id, @RequestParam String username) {
+    Optional<User> userOpt = userService.findByUsername(username);
+    if (userOpt.isEmpty()) return ResponseEntity.status(401).body("User not found");
+
+    TaskResponse task = taskService.getTaskById(id, userOpt.get());
+    return ResponseEntity.ok(task);
+}
+
+
     @GetMapping
     public ResponseEntity<?> getTasks(@RequestParam String username) {
         Optional<User> userOpt = userService.findByUsername(username);

@@ -6,36 +6,53 @@ import { useEffect, useState } from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import EditTask from "@/app/components/task/EditTask";
 import { Task } from "@/app/mock/tasks";
-import { deleteTask, getTasks } from "@/app/services/taskApi";
+import { deleteTask, getTaskById } from "@/app/services/taskApi";
 
 export default function ViewTask() {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const [task, setTask] = useState<Task | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(true);
+  console.log("ViewTask component mounted, id =", id);
+
 
   const fetchTask = async () => {
-    try {
-      const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
-      const tasks = await getTasks(currentUser.username);
-      const t = tasks.find((t: Task) => t.id === Number(id));
-      setTask(t || null);
-    } catch (err) {
-      console.error(err);
+  try {
+    setLoading(true);
+    const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+    console.log("Current user from localStorage:", currentUser);
+
+    if (!id || !currentUser.username) {
+      console.error("Missing id or username");
+      return;
     }
-  };
+
+    const t = await getTaskById(Number(id), currentUser.username);
+    console.log("Fetched task from backend:", t);
+
+    setTask(t);
+  } catch (err) {
+    console.error("Error fetching task:", err);
+    setTask(null);
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     fetchTask();
   }, [id]);
 
+  if (loading) return <p className="text-gray-500">Loading...</p>;
   if (!task) return <p className="text-red-500">Task not found</p>;
 
   const handleDelete = async () => {
+    if (!task.id) return;
     if (confirm("Are you sure you want to delete this task?")) {
       try {
         const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
-        await deleteTask(task.id!, currentUser.username);
+        await deleteTask(task.id, currentUser.username);
         router.push("/tasks");
       } catch (err) {
         console.error(err);
@@ -45,21 +62,25 @@ export default function ViewTask() {
   };
 
   const mapPriorityColor = (priority: string) =>
-    priority === "Extremely" ? "text-red-500" : priority === "Moderate" ? "text-[#42ADE2]" : "text-green-500";
+    priority === "Extremely"
+      ? "text-red-500"
+      : priority === "Moderate"
+      ? "text-[#42ADE2]"
+      : "text-green-500";
 
   const mapStatusColor = (status?: string) => {
-  const s = status?.toLowerCase() || "not completed"; // default if null
-  switch (s) {
-    case "completed":
-      return "text-green-600";
-    case "in progress":
-      return "text-blue-600";
-    case "not completed":
-      return "text-red-600";
-    default:
-      return "text-gray-500";
-  }
-};
+    const s = status?.toLowerCase() || "not completed";
+    switch (s) {
+      case "completed":
+        return "text-green-600";
+      case "in progress":
+        return "text-blue-600";
+      case "not completed":
+        return "text-red-600";
+      default:
+        return "text-gray-500";
+    }
+  };
 
   return (
     <div className="my-5 w-full rounded-2xl border shadow-2xl flex flex-col ">

@@ -32,6 +32,12 @@ public class TaskServiceImpl implements TaskService {
         return toResponse(taskRepository.save(task));
     }
 
+    public TaskResponse getTaskById(Long id, User user) {
+    Task task = taskRepository.findByIdAndUser(id, user)
+        .orElseThrow(() -> new RuntimeException("Task not found or not yours"));
+    return toResponse(task);
+}
+
     @Override
     public List<TaskResponse> getTasks(User user) {
         return taskRepository.findByUser(user)
