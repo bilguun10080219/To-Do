@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Task, Priority } from "@/app/mock/tasks"; 
+import { Task, Priority, Status } from "@/app/mock/tasks"; 
 import { createTask } from "@/app/services/taskApi";
 
 interface AddTaskProps {
@@ -15,6 +15,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
     const [priority, setPriority] = useState<Priority>("Low");
     const [description, setDescription] = useState("");
     const [image, setImage] = useState<File | null>(null);
+    const [status] = useState<Status>("PENDING");
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -23,6 +24,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
         const newTask: Partial<Task> = {
             name: title,
             createdDate,
+            status,
             priority,
             description,
             username: currentUser.username,
@@ -94,7 +96,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
                                     checked={priority === "Extremely"}
                                     onChange={() => setPriority("Extremely")}
                                 />
-                                <span className="text-red-600">● Extreme</span>
+                                <span className="text-red-600">Extreme</span>
                             </label>
                             <label className="flex items-center gap-2">
                                 <input
@@ -104,7 +106,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
                                     checked={priority === "Moderate"}
                                     onChange={() => setPriority("Moderate")}
                                 />
-                                <span className="text-blue-600">● Moderate</span>
+                                <span className="text-blue-600">Moderate</span>
                             </label>
                             <label className="flex items-center gap-2">
                                 <input
@@ -114,7 +116,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
                                     checked={priority === "Low"}
                                     onChange={() => setPriority("Low")}
                                 />
-                                <span className="text-green-600">● Low</span>
+                                <span className="text-green-600">Low</span>
                             </label>
                         </div>
                     </div>
