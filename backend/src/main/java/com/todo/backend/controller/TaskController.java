@@ -46,10 +46,20 @@ public ResponseEntity<?> getTaskById(@PathVariable Long id, @RequestParam String
 
 
     @GetMapping
-    public ResponseEntity<?> getTasks(@RequestParam String username) {
+    public ResponseEntity<?> getTasks(
+            @RequestParam String username,
+            @RequestParam(required = false) String search
+        ) {
         Optional<User> userOpt = userService.findByUsername(username);
         if (userOpt.isEmpty()) return ResponseEntity.status(401).body("User not found");
-        return ResponseEntity.ok(taskService.getTasks(userOpt.get()));
+
+        List<TaskResponse> tasks;
+        if (search != null && !search.isBlank()) {
+            tasks = taskService.searchTasks(userOpt.get(), search);
+        } else {
+            tasks = taskService.getTasks(userOpt.get());
+        }
+        return ResponseEntity.ok(tasks);
     }
 
     @PutMapping("/{id}")

@@ -10,7 +10,11 @@ interface User {
   role: string;
 }
 
-export default function Header() {
+interface HeaderProps {
+  onSearch?: (query: string) => void;
+}
+
+export default function Header({onSearch}: HeaderProps) {
   const [user, setUser] = useState<User | null>(null);
   const pathname = usePathname();
 
@@ -38,11 +42,7 @@ export default function Header() {
 
   const [first, second] = splitTitle(title);
 
-  // ✅ Search query-г хүлээн авах callback
-  const handleSearch = (query: string) => {
-    console.log("Search query:", query);
-    // эндээс /tasks API дуудаж filter хийж болно
-  };
+
 
   return (
     <header className="bg-white min-h-[60px] shadow-md px-8 py-4 flex flex-row justify-between items-center">
@@ -52,7 +52,7 @@ export default function Header() {
       </h2>
 
       {/* Search-д callback дамжуулж байна */}
-      <Search onSearch={handleSearch} />
+      <Search onSearch={pathname === "/tasks" ? onSearch : undefined} />
       <div className="flex flex-col items-end text-right ml-4">
         {/* Дээд мөр: долоо хоногийн өдөр */}
         <span className="text-black text-sm font-medium">

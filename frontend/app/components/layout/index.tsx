@@ -9,9 +9,10 @@ import { usePathname } from "next/navigation";
 interface LayoutProps {
   children: ReactNode;
   className?: string;
+  onSearch?: (query: string) => void;
 }
 
-export default function Layout({ children, className }: LayoutProps) {
+export default function Layout({ children, className, onSearch }: LayoutProps) {
   const [username, setUsername] = useState<string>("");
   const pathname = usePathname();
 
@@ -19,7 +20,7 @@ export default function Layout({ children, className }: LayoutProps) {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       const user = JSON.parse(storedUser);
-      setUsername(user.username); // эсвэл user.name байж болно
+      setUsername(user.username); 
     }
   }, []);
 
@@ -30,7 +31,7 @@ export default function Layout({ children, className }: LayoutProps) {
         className
       )}
     >
-      <Header />
+      <Header onSearch={onSearch}/>
 
       <div className="flex-1 flex flex-row">
         <div className="flex flex-row w-full">

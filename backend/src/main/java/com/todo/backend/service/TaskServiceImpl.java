@@ -32,6 +32,7 @@ public class TaskServiceImpl implements TaskService {
         return toResponse(taskRepository.save(task));
     }
 
+    @Override
     public TaskResponse getTaskById(Long id, User user) {
     Task task = taskRepository.findByIdAndUser(id, user)
         .orElseThrow(() -> new RuntimeException("Task not found or not yours"));
@@ -44,6 +45,15 @@ public class TaskServiceImpl implements TaskService {
                 .stream()
                 .map(this::toResponse)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<TaskResponse> searchTasks(User user, String search) {
+        return taskRepository
+            .searchByUserAndNameOrDescription(user, search)
+            .stream()
+            .map(this::toResponse)
+            .collect(Collectors.toList());
     }
 
     @Override

@@ -1,19 +1,19 @@
 "use client";
 
+import { useState } from "react";
 import TaskCard from "./TaskCard";
 import { Task } from "@/app/mock/tasks";
 import Button from "@/app/components/core/Button";
 import { Plus } from "lucide-react";
 import AddTask from "@/app/components/task/AddTask";
 import { Droppable, Draggable } from "@hello-pangea/dnd";
-import { useState } from "react";
 
 interface TaskListProps {
-  status: string;
+  status?: string;
   tasks: Task[];
 }
 
-export default function TaskList({ status, tasks }: TaskListProps) {
+export default function TaskList({ status = "", tasks }: TaskListProps) {
   const [isAdding, setIsAdding] = useState(false);
 
   return (
@@ -40,25 +40,23 @@ export default function TaskList({ status, tasks }: TaskListProps) {
             {...provided.droppableProps}
             className="min-h-full flex flex-col gap-3"
           >
-            {tasks
-              .filter((task) => task.status === status)
-              .map((task, index) => (
-                <Draggable
-                  key={task.id}
-                  draggableId={task.id.toString()}
-                  index={index}
-                >
-                  {(provided) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                    >
-                      <TaskCard task={task} imageUrl={task.imageUrl} />
-                    </div>
-                  )}
-                </Draggable>
-              ))}
+            {tasks.map((task, index) => (
+              <Draggable
+                key={task.id}
+                draggableId={task.id.toString()}
+                index={index}
+              >
+                {(provided) => (
+                  <div
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                  >
+                    <TaskCard task={task} imageUrl={task.imageUrl} />
+                  </div>
+                )}
+              </Draggable>
+            ))}
             {provided.placeholder}
           </div>
         )}
@@ -69,7 +67,6 @@ export default function TaskList({ status, tasks }: TaskListProps) {
           <AddTask
             onClose={() => {
               setIsAdding(false);
-              // эндээс fetchTasks-г page дотроос дахин дуудах боломжтой болгох хэрэгтэй
               window.location.reload();
             }}
           />
