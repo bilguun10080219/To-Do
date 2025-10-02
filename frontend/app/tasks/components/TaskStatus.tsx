@@ -1,8 +1,9 @@
 "use client";
 
-import React from "react";
-import { mockTasks } from "@/app/mock/tasks";
+import React, { useEffect, useState } from "react";
+import { getTasks } from "@/app/services/taskApi";
 import { FileCheck2 } from "lucide-react";
+import { Task } from "@/app/mock/tasks";
 
 interface TaskStatusProps {
   size?: number;
@@ -10,25 +11,48 @@ interface TaskStatusProps {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  Completed: "#22c55e",
-  "In Progress": "#3b82f6",
-  "Not Completed": "#ef4444",
+  COMPLETED: "#22c55e",
+  IN_PROGRESS: "#3b82f6",
+  PENDING: "#ef4444",
 };
 
-const STATUS_ORDER = ["Completed", "In Progress", "Not Completed"];
+const STATUS_ORDER = ["COMPLETED", "IN_PROGRESS", "PENDING"];
 
 export default function TaskStatus({
   size = 120,
   strokeWidth = 10,
 }: TaskStatusProps) {
-  const total = mockTasks.length;
-  const counts: Record<string, number> = {
-    Completed: 0,
-    "In Progress": 0,
-    "Not Completed": 0,
-  };
-  mockTasks.forEach((task) => (counts[task.status] += 1));
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (!storedUser) return;
+
+    const user = JSON.parse(storedUser);
+    const username = user?.username;
+    if (!username) return;
+
+    getTasks(username)
+      .then((data: Task[]) => {
+        console.log("Tasks from backend:", data); // 👈 энд шалгах
+        setTasks(data);
+      })
+      .catch((err) => console.error(err));
+  }, []);
+
+  const total = tasks.length;
+  const counts: Record<string, number> = {
+    COMPLETED: 0,
+    IN_PROGRESS: 0,
+    PENDING: 0,
+  };
+
+  tasks.forEach((task) => {
+    if (counts[task.status] !== undefined) {
+      counts[task.status] += 1;
+    }
+  });
   return (
     <div className="bg-white shadow-md rounded-2xl p-6 h-fit">
       {/* Title */}

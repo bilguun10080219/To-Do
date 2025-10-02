@@ -1,11 +1,44 @@
-import { mockTasks } from "@/app/mock/tasks";
+"use client";
+
+import React, { useEffect, useState } from "react";
+import { getTasks } from "@/app/services/taskApi";
 import CompletedTask from "./CompletedTask";
 import { FileCheck } from "lucide-react";
+import { Task } from "@/app/mock/tasks";
 
 export default function CompletedTasksList() {
-  const completedTasks = mockTasks.filter(
-    (task) => task.status === "Completed"
-  );
+  const [completedTasks, setCompletedTasks] = useState<Task[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (!storedUser) {
+      console.error("No user found in localStorage");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const user = JSON.parse(storedUser);
+      const username = user.username;
+      if (!username) {
+        console.error("User has no username");
+        setLoading(false);
+        return;
+      }
+
+      getTasks(username)
+        .then((tasks: Task[]) => {
+          const filtered = tasks.filter((task) => task.status === "COMPLETED");
+          setCompletedTasks(filtered);
+        })
+        .catch((err) => console.error("Failed to fetch tasks:", err))
+        .finally(() => setLoading(false));
+    } catch (e) {
+      console.error("Invalid user data in localStorage");
+      setLoading(false);
+    }
+  }, []);
 
   if (completedTasks.length === 0) return null;
 

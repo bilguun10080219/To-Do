@@ -30,7 +30,7 @@ export default function TaskList() {
   }, []);
 
   return (
-    <div className="p-6 bg-white rounded-2xl shadow-md space-y-4 w-full max-w-[730px]">
+    <div className="p-6 bg-white rounded-2xl min-h-full shadow-md space-y-4 w-full max-w-[730px]">
       {/* Header with title and button */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold">Tasks</h2>
@@ -49,9 +49,9 @@ export default function TaskList() {
       ) : tasks.length === 0 ? (
         <p className="text-gray-500 italic">No tasks found.</p>
       ) : (
-        <div className="flex flex-col gap-3 max-h-[400px] overflow-y-auto">
+        <div className="min-h-full flex flex-col gap-3 overflow-y-auto">
           {tasks
-            .filter((task) => task.status !== "Completed")
+            .filter((task) => task.status !== "COMPLETED")
             .map((task) => (
               <TaskCard key={task.id} task={task} imageUrl={task.imageUrl} />
             ))}
