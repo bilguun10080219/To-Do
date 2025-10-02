@@ -35,9 +35,13 @@ export default function AllTasksList() {
         <p className="text-gray-500 italic">No tasks found.</p>
       ) : (
         <div className="flex flex-col gap-3">
-          {tasks.map((task) => (
-            <TaskCard key={task.id} task={task} imageUrl={task.imageUrl} />
-          ))}
+          {tasks
+            .filter(
+              (task) => task.status === "PENDING" || task.status === "IN_PROGRESS"
+            )
+            .map((task) => (
+              <TaskCard key={task.id} task={task} imageUrl={task.imageUrl} />
+            ))}
         </div>
       )}
     </div>
