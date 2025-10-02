@@ -9,10 +9,9 @@ import {
   LayoutDashboard,
   List,
   LogOut,
-  User,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import Button from "../core/Button";
+import { User } from "@/app/mock/auth";
 
 interface UserData {
   username: string;
@@ -22,7 +21,6 @@ interface UserData {
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const [user, setUser] = useState<UserData | null>(null);
 
   useEffect(() => {
     const match = document.cookie.match(/user=([^;]+)/);
@@ -46,10 +44,32 @@ export default function Sidebar() {
     window.location.href = "/login";
   };
 
+
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const parsed: User = JSON.parse(storedUser);
+      setUser(parsed);
+    }
+  }, []);
+
   return (
-    <aside className="w-64 max-h-screen bg-[#FF6767] text-white items-start p-6 flex flex-col rounded-r-2xl">
-      {/* Navigation хэсэг */}
-      <nav>
+    <aside className="w-fit min-h-screen bg-[#FF6767] text-white p-6 flex flex-col rounded-r-2xl">
+      {/* Profile хэсэг */}
+      <div className="flex flex-col items-center mb-8">
+        <img
+          src={user?.avatar || "/default-avatar.png"}
+          alt="Profile"
+          className="w-20 h-20 rounded-full border-2 border-white mb-3"
+        />
+        <h2 className="font-semibold text-lg">{user ? user.username : "Guest"}</h2>
+        <p className="text-sm opacity-80">{user?.email || "guest@example.com"}</p>
+      </div>
+
+      {/* Navigation links */}
+      <nav className="flex-1">
         <ul>
           {links.map((link) => (
             <li key={link.href}>
@@ -70,14 +90,19 @@ export default function Sidebar() {
         </ul>
       </nav>
 
-      <Button
-        onClick={handleLogout}
-        className="flex items-start gap-2 transition-colors px-3 py-2 rounded-lg w-full"
-        leftIcon={<LogOut />}
+      <button
+        onClick={() => {
+          localStorage.removeItem("user");
+          window.location.href = "/login";
+        }}
+        className="flex items-center gap-2 mb-4 p-3 rounded-lg transition-colors hover:bg-white hover:text-red-500"
       >
+        <LogOut size={20} />
         Logout
-      </Button>
-      <p className="mt-4 text-xs opacity-70">v1.0.0</p>
+      </button>
+
+
+      <div className="mt-auto text-sm opacity-80">v1.0.0</div>
     </aside>
   );
 }

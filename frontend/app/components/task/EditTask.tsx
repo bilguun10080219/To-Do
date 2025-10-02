@@ -10,7 +10,7 @@ interface EditTaskProps {
   onUpdated: () => void;
 }
 
-export default function EditTask({ task, onClose }: EditTaskProps) {
+export default function EditTask({ task, onClose, onUpdated }: EditTaskProps) {
   const [title, setTitle] = useState(task.name);
   const [createdDate, setCreatedDate] = useState(task.createdDate.split("T")[0]);
   const [priority, setPriority] = useState<Priority>(task.priority);
@@ -43,6 +43,7 @@ e.preventDefault();
 
     await updateTask(task.id, updatedTask);
     onClose();
+    onUpdated();
   } catch (err) {
     console.error(err);
     alert("Failed to update task");
