@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Task, Priority, Status } from "@/app/mock/tasks"; // mock-оос type авна
-import { updateTask } from "@/app/services/taskApi";
+import { Task, Priority, Status } from "@/app/mock/tasks"; 
+import { updateTask, uploadFile } from "@/app/services/taskApi";
 
 interface EditTaskProps {
   task: Task;
@@ -20,8 +20,16 @@ export default function EditTask({ task, onClose }: EditTaskProps) {
   const [status, setStatus] = useState<Status>(task.status);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+e.preventDefault();
+  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+  setLoading(true);
+
+  try {
+    let imageUrl = task.imageUrl;
+
+    if (image) {
+      imageUrl = await uploadFile(image);
+    }
 
     const updatedTask = {
       name: title,
@@ -29,18 +37,19 @@ export default function EditTask({ task, onClose }: EditTaskProps) {
       priority,
       description,
       username: currentUser.username,
-      status
+      status,      
+      imageUrl,
     };
 
-    try {
-      await updateTask(task.id, updatedTask);
-      onClose();
-    } catch (err) {
-      console.error(err);
-      alert("Failed to update task");
-    }
-  };
-
+    await updateTask(task.id, updatedTask);
+    onClose();
+  } catch (err) {
+    console.error(err);
+    alert("Failed to update task");
+  } finally {
+    setLoading(false);
+  }
+};
   return (
     <div className="bg-[#F9F9F9] w-[918px] h-[708px] rounded-md border border-gray-300 shadow-2xl p-8">
       <form onSubmit={handleSubmit} className="h-full flex flex-col space-y-6">
@@ -206,9 +215,9 @@ export default function EditTask({ task, onClose }: EditTaskProps) {
         <div className="flex justify-start pt-4">
           <button
             type="submit"
-            className="bg-orange-500 text-white px-6 py-2 rounded hover:bg-orange-600"
+            className="bg-orange-500 text-white px-6 py-2 rounded hover:bg-orange-600" disabled={loading}
           >
-            Done
+            {loading ? "Uploading..." : "Save"}
           </button>
         </div>
       </form>

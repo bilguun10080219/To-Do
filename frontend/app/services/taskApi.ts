@@ -16,3 +16,17 @@ export const updateTask = (id: number, task: any) =>
 
 export const deleteTask = (id: number, username: string) =>
   axios.delete(`${BASE_URL}/${id}`, { params: { username } }).then(res => res.data);
+
+export const uploadFile = async (file: File): Promise<string> => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const res = await fetch("http://localhost:8080/api/files/upload", {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!res.ok) throw new Error("Upload failed");
+  const data = await res.json();
+  return data.url; 
+};

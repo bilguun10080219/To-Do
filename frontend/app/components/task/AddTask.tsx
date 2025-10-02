@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Task, Priority, Status } from "@/app/mock/tasks"; 
-import { createTask } from "@/app/services/taskApi";
+import { Task, Priority, Status } from "@/app/mock/tasks";
+import { createTask, uploadFile } from "@/app/services/taskApi";
 
 interface AddTaskProps {
     onClose: () => void;
@@ -16,10 +16,20 @@ export default function AddTask({ onClose }: AddTaskProps) {
     const [description, setDescription] = useState("");
     const [image, setImage] = useState<File | null>(null);
     const [status] = useState<Status>("PENDING");
+    const [loading, setLoading] = useState(false);
+
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const currentUser = JSON.parse(localStorage.getItem("user") || "{}")
+        const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+
+        setLoading(true);
+        try {
+            let imageUrl:string | null = null;
+
+            if (image) {
+                imageUrl = await uploadFile(image);
+            }
 
         const newTask: Partial<Task> = {
             name: title,
@@ -28,14 +38,16 @@ export default function AddTask({ onClose }: AddTaskProps) {
             priority,
             description,
             username: currentUser.username,
+            imageUrl,
         };
         
-        try {
             await createTask(newTask);
             onClose();
         } catch (err) {
             console.error(err);
             alert("Failed to add task");
+        } finally {
+            setLoading(false);
         }
 
     };
@@ -170,9 +182,9 @@ export default function AddTask({ onClose }: AddTaskProps) {
                 <div className="flex justify-start pt-4">
                     <button
                         type="submit"
-                        className="bg-orange-500 text-white px-6 py-2 rounded hover:bg-orange-600"
+                        className="bg-orange-500 text-white px-6 py-2 rounded hover:bg-orange-600" disabled={loading}
                     >
-                        Save
+                        {loading ? "Uploading..." : "Save" }
                     </button>
                 </div>
             </form>
