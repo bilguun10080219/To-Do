@@ -2,6 +2,7 @@ import Layout from "./components/layout";
 import TaskList from "./tasks/components/TaskList";
 import TaskStatus from "./tasks/components/TaskStatus";
 import CompletedTasksList from "./tasks/components/CompletedTaskList";
+import AllTasksList from "./tasks/components/TaskAll";
 
 export default function Page() {
   return (
@@ -10,7 +11,7 @@ export default function Page() {
         <div className="flex flex-row gap-4">
           {/* Зүүн тал - TaskList */}
           <div className="flex-1">
-            <TaskList />
+            <AllTasksList />
           </div>
 
           {/* Баруун тал - TaskStatus + CompletedTasksList */}

@@ -12,4 +12,5 @@ export interface Task {
   createdDate: string;
   completedDate?: string;
   imageUrl?: string;
+  username: string;
 }

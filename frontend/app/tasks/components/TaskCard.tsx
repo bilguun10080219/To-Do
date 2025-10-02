@@ -54,9 +54,9 @@ export default function TaskCard({ task, imageUrl, onClick }: TaskCardProps) {
           className={cn(
             "w-4 h-4 rounded-full absolute top-4 left-4 border-2 bg-white",
             {
-              "border-[#F21E1E]": task.status === "Not Completed",
-              "border-[#0225FF]": task.status === "In Progress",
-              "border-[#05A301]": task.status === "Completed",
+              "border-[#F21E1E]": task.status === "PENDING",
+              "border-[#0225FF]": task.status === "IN_PROGRESS",
+              "border-[#05A301]": task.status === "COMPLETED",
             }
           )}
         ></div>
