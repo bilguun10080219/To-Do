@@ -6,6 +6,7 @@ import Form from "../components/form/Form";
 import FormItem from "../components/form/FormItem";
 import Input from "../components/core/Input";
 import Button from "../components/core/Button";
+import { User, Mail, Lock, ShieldCheck } from "lucide-react";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -76,43 +77,59 @@ export default function RegisterPage() {
             <h1 className="text-2xl font-semibold mb-6 text-center">Sign Up</h1>
 
             <FormItem label="Username">
+              <div className="relative w-full">
+              <User className="absolute left-3 top-1/2 -translate-y-1/2 text-black w-5 h-5" />
               <Input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="Username"
+                className="pl-10"
                 required
               />
+              </div>
             </FormItem>
 
             <FormItem label="Email">
+              <div className="relative w-full">
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-black w-5 h-5" />
               <Input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email"
+                className="pl-10"
                 required
               />
+              </div>
             </FormItem>
 
             <FormItem label="Password">
+              <div className="relative w-full">
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-black w-5 h-5" />
               <Input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
+                className="pl-10"
                 required
               />
+              </div>
             </FormItem>
 
             <FormItem label="Confirm Password">
+              <div className="relative w-full">
+              <ShieldCheck className="absolute left-3 top-1/2 -translate-y-1/2 text-black w-5 h-5" />
               <Input
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Confirm Password"
+                className="pl-10"
                 required
               />
+              </div>
             </FormItem>
 
             <FormItem>

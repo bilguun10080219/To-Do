@@ -60,7 +60,7 @@ export default function Sidebar() {
       {/* Profile хэсэг */}
       <div className="flex flex-col items-center mb-8">
         <img
-          src={user?.avatar || "/default-avatar.png"}
+          src={"/default-avatar.jpg"}
           alt="Profile"
           className="w-20 h-20 rounded-full border-2 border-white mb-3"
         />
