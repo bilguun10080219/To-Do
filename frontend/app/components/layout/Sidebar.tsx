@@ -9,6 +9,7 @@ import {
   LayoutDashboard,
   List,
   LogOut,
+  Settings
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { User } from "@/app/mock/auth";
@@ -31,6 +32,7 @@ export default function Sidebar() {
     { href: "/", label: "Dashboard", icon: <LayoutDashboard size={24} /> },
     { href: "/tasks", label: "Tasks", icon: <FileCheck size={24} /> },
     { href: "/categories", label: "Task Categories", icon: <List size={20} /> },
+    { href: "/settings", label: "Settings", icon: <Settings size={20} /> },
   ];
 
   const handleLogout = () => {
