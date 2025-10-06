@@ -25,7 +25,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
 
         setLoading(true);
         try {
-            let imageUrl:string | null = null;
+            let imageUrl:string | undefined = undefined;
 
             if (image) {
                 imageUrl = await uploadFile(image);

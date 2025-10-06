@@ -59,7 +59,7 @@ export default function TasksPage() {
   return (
     <Layout onSearch={setSearchQuery}>
       <DragDropContext onDragEnd={handleDragEnd}>
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-3 gap-4">
           <TaskList
             status="PENDING"
             tasks={tasks.filter((t) => t.status === "PENDING")}

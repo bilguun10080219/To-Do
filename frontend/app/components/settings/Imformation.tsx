@@ -8,7 +8,7 @@ interface InformationProps {
     email: string;
     avatar?: string;
   };
-  onSubmit?: (updatedUser: { username: string; email: string; language: string }) => void;
+  onSubmit?: (updatedUser: { username: string; email: string }) => void;
 }
 
 export default function Information({ user, onSubmit }: InformationProps) {
@@ -16,7 +16,6 @@ export default function Information({ user, onSubmit }: InformationProps) {
   const [email, setEmail] = useState(user.email);
   const [language, setLanguage] = useState("en");
 
-  // эхлэх үед localStorage-оос уншина
   useEffect(() => {
     const savedLang = localStorage.getItem("language");
     if (savedLang) setLanguage(savedLang);
@@ -41,7 +40,7 @@ export default function Information({ user, onSubmit }: InformationProps) {
         <img
           src={"/default-avatar.jpg"}
           alt="Profile"
-          className="w-20 h-20 rounded-full border-2 border-white mb-3"
+          className="w-30 h-30 rounded-full border-2 border-white mb-3"
         />
         <div>
           <p className="font-semibold text-lg">{username}</p>
