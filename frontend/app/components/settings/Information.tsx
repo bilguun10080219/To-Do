@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { updateUser } from "@/app/services/userApi";
 
 interface InformationProps {
@@ -9,11 +9,18 @@ interface InformationProps {
     email: string;
     avatar?: string;
   };
+  onSubmit?: (updatedUser: { username: string; email: string }) => void;
 }
 
-export default function Information({ user }: InformationProps) {
+export default function Information({ user, onSubmit }: InformationProps) {
   const [username, setUsername] = useState(user.username);
   const [email, setEmail] = useState(user.email);
+  const [language, setLanguage] = useState<string>("");
+
+  useEffect(() => {
+    const savedLang = localStorage.getItem("language");
+    if (savedLang) setLanguage(savedLang);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,6 +28,7 @@ export default function Information({ user }: InformationProps) {
       await updateUser(user.username, username, email); // pass old username
       alert("Profile updated successfully!");
       localStorage.setItem("user", JSON.stringify({ username, email }));
+      if (onSubmit) onSubmit({ username, email });
     } catch (err: any) {
       console.error(err);
       alert("Failed to update profile: " + (err.response?.data || err.message));
@@ -35,9 +43,9 @@ export default function Information({ user }: InformationProps) {
 
       <div className="flex items-center gap-4 my-6">
         <img
-          src={"/default-avatar.jpg"}
+          src={user.avatar || "/default-avatar.jpg"}
           alt="Profile"
-          className="w-20 h-20 rounded-full border-2 border-white mb-3"
+          className="w-30 h-30 rounded-full border-2 border-white mb-3"
         />
         <div>
           <p className="font-semibold text-lg">{username}</p>

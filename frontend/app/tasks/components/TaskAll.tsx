@@ -27,17 +27,23 @@ export default function AllTasksList() {
 
   return (
     <div className="p-6 bg-white rounded-2xl shadow-md space-y-4 w-full">
-      <h2 className="text-xl font-semibold mb-4">All Tasks</h2>
+      <h2 className="text-xl font-semibold mb-4 col-span-2">All Tasks</h2>
 
       {loading ? (
         <p>Loading tasks...</p>
       ) : tasks.length === 0 ? (
-        <p className="text-gray-500 italic">No tasks found.</p>
+
+        <div className="flex flex-col items-center justify-center 
+                        bg-gray-50 border border-dashed border-gray-300 
+                        rounded-lg h-40 text-gray-400 gap-2">
+          <span className="text-sm">No tasks found</span>
+        </div>
       ) : (
         <div className="flex flex-col gap-3">
           {tasks
             .filter(
-              (task) => task.status === "PENDING" || task.status === "IN_PROGRESS"
+              (task) =>
+                task.status === "PENDING" || task.status === "IN_PROGRESS"
             )
             .map((task) => (
               <TaskCard key={task.id} task={task} imageUrl={task.imageUrl} />

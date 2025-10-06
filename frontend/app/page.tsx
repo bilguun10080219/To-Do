@@ -10,7 +10,7 @@ export default function Page() {
       <Layout>
         <div className="flex flex-row gap-4">
           {/* Зүүн тал - TaskList */}
-          <div className="flex-1">
+          <div className="flex-1 min-w-[350px]">
             <AllTasksList />
           </div>
 
