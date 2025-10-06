@@ -8,6 +8,8 @@ import Input from "../components/core/Input";
 import FormItem from "../components/form/FormItem";
 import { User, Lock } from "lucide-react";
 
+const USE_FAKE_LOGIN = true;
+
 export default function LoginPage() {
   const router = useRouter();
 
@@ -37,11 +39,23 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:8080/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
+      if (USE_FAKE_LOGIN) {
+        // --- FAKE LOGIN ---
+        // Хэрвээ admin гэж бичвэл админ болж орно
+        // Бусад нь энгийн хэрэглэгч болно
+        const user =
+          username === "admin@example.com" || username === "admin"
+            ? { username, role: "admin", name: "Admin" }
+            : { username, role: "user", name: "User" };
+
+        localStorage.setItem("user", JSON.stringify(user));
+        router.push("/");
+      } else {
+        const res = await fetch("http://localhost:8080/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password }),
+        });
 
       if (res.ok) {
         const user = await res.json();
@@ -129,6 +143,23 @@ export default function LoginPage() {
             >
               Register
             </Button>
+            {/* Demo login shortcuts */}
+            <div className="flex gap-2 mt-3">
+              <button
+                type="button"
+                onClick={() => {
+                  localStorage.setItem(
+                    "user",
+                    JSON.stringify({ username: "admin@example.com", role: "admin" })
+                  );
+                  router.push("/");
+                }}
+                className="px-3 py-1.5 rounded-lg bg-orange-500 text-white hover:bg-orange-600 transition"
+              >
+                Quick Admin
+              </button>
+            </div>
+
           </div>
 
           {/* IMAGE */}
