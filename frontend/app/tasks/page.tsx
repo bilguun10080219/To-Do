@@ -12,12 +12,16 @@ export default function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
+  const [role, setRole] = useState("user");
 
   useEffect(() => {
     const user = localStorage.getItem("user");
     if (!user) {
       router.push("/login");
-    }
+    }else {
+  const parsed = JSON.parse(user);
+  setRole(parsed.role || "user"); 
+}
   }, [router]);
 
 
@@ -72,14 +76,17 @@ export default function TasksPage() {
         <div className="grid grid-cols-3 gap-4">
           <TaskList
             status="PENDING"
+            role={role}
             tasks={tasks.filter((t) => t.status === "PENDING")}
           />
           <TaskList
             status="IN_PROGRESS"
+            role={role}
             tasks={tasks.filter((t) => t.status === "IN_PROGRESS")}
           />
           <TaskList
             status="COMPLETED"
+            role={role}
             tasks={tasks.filter((t) => t.status === "COMPLETED")}
           />
         </div>

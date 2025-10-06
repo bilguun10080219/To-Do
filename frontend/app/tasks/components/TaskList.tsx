@@ -10,9 +10,11 @@ import { Droppable, Draggable } from "@hello-pangea/dnd";
 interface TaskListProps {
   status?: string;
   tasks: Task[];
+  role?: string;
 }
 
-export default function TaskList({ status = "", tasks }: TaskListProps) {
+export default function TaskList({ status = "", tasks, role }: TaskListProps) {
+
   const [isAdding, setIsAdding] = useState(false);
 
   return (
@@ -48,8 +50,6 @@ export default function TaskList({ status = "", tasks }: TaskListProps) {
                               rounded-lg h-32 text-gray-400 gap-2">
                 {/* Placeholder */}
                 <span className="text-sm">No tasks here</span>
-
-                {/* зөвхөн PENDING үед Add button гарна */}
 
               </div>
             ) : (
