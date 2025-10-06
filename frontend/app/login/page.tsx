@@ -10,12 +10,30 @@ import { User, Lock } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({
+    username: "",
+    password: "",
+    server: "",
+  });
+
+  // 🔍 Basic validation logic
+  const validate = () => {
+    const newErrors: any = {};
+    if (!username.trim()) newErrors.username = "Username is required.";
+    if (!password.trim()) newErrors.password = "Password is required.";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!validate()) return;
     setLoading(true);
 
     try {
@@ -31,11 +49,19 @@ export default function LoginPage() {
         router.push("/");
       } else {
         const msg = await res.text();
-        alert(msg || "Invalid credentials");
+        setErrors({
+          username: "",
+          password: "",
+          server: msg || "Invalid username or password.",
+        });
       }
     } catch (err) {
       console.error(err);
-      alert("Error connecting to server");
+      setErrors({
+        username: "",
+        password: "",
+        server: "Error connecting to server. Please try again later.",
+      });
     } finally {
       setLoading(false);
     }
@@ -49,39 +75,52 @@ export default function LoginPage() {
       >
         <div className="flex flex-row gap-4 justify-between">
           <div className="flex w-full flex-col gap-5 items-start">
-            <h1 className="text-2xl font-semibold mb-6 text-center">Sign in</h1>
+            <h1 className="text-2xl font-semibold mb-6 text-center">Sign In</h1>
 
+            {/* USERNAME FIELD */}
             <FormItem label="Username">
               <div className="relative w-full">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 text-black w-5 h-5" />
-              <Input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Enter username"
-                className="pl-10"
-                required
-              />
+                <Input
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Enter username"
+                  className="pl-10"
+                />
               </div>
+              {errors.username && (
+                <p className="text-red-500 text-sm mt-1">{errors.username}</p>
+              )}
             </FormItem>
 
+            {/* PASSWORD FIELD */}
             <FormItem label="Password">
               <div className="relative w-full">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-black w-5 h-5" />
-              <Input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter password"
-                className="pl-10"
-                required
-              />
+                <Input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter password"
+                  className="pl-10"
+                />
               </div>
+              {errors.password && (
+                <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+              )}
             </FormItem>
 
-            <Button type="submit" className=" mt-4" disabled={loading}>
+            {/* SERVER/GENERAL ERROR */}
+            {errors.server && (
+              <p className="text-red-500 text-sm mt-1">{errors.server}</p>
+            )}
+
+            {/* BUTTONS */}
+            <Button type="submit" className="mt-4" disabled={loading}>
               {loading ? "Logging in..." : "Login"}
             </Button>
+
             <Button
               type="button"
               variant="secondary"
@@ -92,6 +131,7 @@ export default function LoginPage() {
             </Button>
           </div>
 
+          {/* IMAGE */}
           <img
             src="/ach3%201.png"
             alt="Login illustration"
