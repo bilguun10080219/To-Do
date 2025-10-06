@@ -10,7 +10,7 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository){
         this.userRepository = userRepository;
     }
 
@@ -21,4 +21,25 @@ public class UserService {
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
+
+    public User updateUser(String currentUsername, String newUsername, String newEmail) {
+    User user = userRepository.findByUsername(currentUsername)
+        .orElseThrow(() -> new RuntimeException("User not found"));
+    user.setUsername(newUsername);
+    user.setEmail(newEmail);
+    return userRepository.save(user);
+}
+
+public void changePassword(String username, String currentPassword, String newPassword) {
+    User user = userRepository.findByUsername(username)
+        .orElseThrow(() -> new RuntimeException("User not found"));
+
+    if (!user.getPassword().equals(currentPassword)) {
+        throw new RuntimeException("Current password is incorrect");
+    }
+
+    user.setPassword(newPassword);
+    userRepository.save(user);
+}
+
 }

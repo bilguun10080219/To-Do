@@ -1,33 +1,36 @@
 "use client";
 
 import { useState } from "react";
+import { changePassword } from "@/app/services/userApi";
 
 interface ChangePasswordFormProps {
   user: {
     username: string;
-    email: string;
-    avatar?: string;
   };
   onCancel: () => void;
-  onSubmit: (currentPassword: string, newPassword: string) => void;
 }
 
-export default function ChangePasswordForm({
-  user,
-  onCancel,
-  onSubmit,
-}: ChangePasswordFormProps) {
+export default function ChangePasswordForm({ user, onCancel }: ChangePasswordFormProps) {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
       alert("Passwords do not match");
       return;
     }
-    onSubmit(currentPassword, newPassword);
+    try {
+      await changePassword(user.username, currentPassword, newPassword);
+      alert("Password updated successfully!");
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (err: any) {
+      console.error(err);
+      alert("Failed to update password: " + (err.response?.data || err.message));
+    }
   };
 
   return (
@@ -36,7 +39,6 @@ export default function ChangePasswordForm({
         Change Password
       </h2>
 
-      {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-4 mt-6">
         <div>
           <label className="block text-sm mb-1">Current Password</label>

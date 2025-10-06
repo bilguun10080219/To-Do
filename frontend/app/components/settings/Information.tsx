@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { updateUser } from "@/app/services/userApi";
 
 interface InformationProps {
   user: {
@@ -8,26 +9,22 @@ interface InformationProps {
     email: string;
     avatar?: string;
   };
-  onSubmit?: (updatedUser: { username: string; email: string; language: string }) => void;
 }
 
-export default function Information({ user, onSubmit }: InformationProps) {
+export default function Information({ user }: InformationProps) {
   const [username, setUsername] = useState(user.username);
   const [email, setEmail] = useState(user.email);
-  const [language, setLanguage] = useState("en");
 
-  // эхлэх үед localStorage-оос уншина
-  useEffect(() => {
-    const savedLang = localStorage.getItem("language");
-    if (savedLang) setLanguage(savedLang);
-  }, []);
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const updatedUser = { username, email, language };
-    console.log("Updated User:", updatedUser);
-    if (onSubmit) onSubmit(updatedUser);
-    alert("Profile updated!");
+    try {
+      await updateUser(user.username, username, email); // pass old username
+      alert("Profile updated successfully!");
+      localStorage.setItem("user", JSON.stringify({ username, email }));
+    } catch (err: any) {
+      console.error(err);
+      alert("Failed to update profile: " + (err.response?.data || err.message));
+    }
   };
 
   return (
@@ -36,7 +33,6 @@ export default function Information({ user, onSubmit }: InformationProps) {
         General Settings
       </h2>
 
-      {/* Avatar */}
       <div className="flex items-center gap-4 my-6">
         <img
           src={"/default-avatar.jpg"}
@@ -49,7 +45,6 @@ export default function Information({ user, onSubmit }: InformationProps) {
         </div>
       </div>
 
-      {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block text-sm mb-1">Username</label>
@@ -86,7 +81,6 @@ export default function Information({ user, onSubmit }: InformationProps) {
             onClick={() => {
               setUsername(user.username);
               setEmail(user.email);
-              setLanguage(localStorage.getItem("language") || "en");
             }}
           >
             Cancel
