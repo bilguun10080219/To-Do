@@ -4,9 +4,18 @@ import { useEffect, useState } from "react";
 import Layout from "@/app/components/layout";
 import Information from "../components/settings/Information";
 import ChangePasswordForm from "../components/settings/ChangePasswordForm";
+import { useRouter } from "next/navigation";
 
 export default function SettingsPage() {
   const [currentUser, setCurrentUser] = useState<{ username: string; email: string } | null>(null);
+    const router = useRouter();
+  
+    useEffect(() => {
+      const user = localStorage.getItem("user");
+      if (!user) {
+        router.push("/login");
+      }
+    }, [router]);
 
   useEffect(() => {
     const savedUser = localStorage.getItem("user");

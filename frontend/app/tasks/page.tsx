@@ -6,10 +6,20 @@ import TaskList from "./components/TaskList";
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 import { Task } from "@/app/mock/tasks";
 import { getTasks, updateTask } from "@/app/services/taskApi";
+import { useRouter } from "next/navigation";
 
 export default function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const router = useRouter();
+
+  useEffect(() => {
+    const user = localStorage.getItem("user");
+    if (!user) {
+      router.push("/login");
+    }
+  }, [router]);
+
 
   const fetchTasks = async () => {
     try {

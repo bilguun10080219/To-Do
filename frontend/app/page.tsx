@@ -6,11 +6,20 @@ import TaskStatus from "./tasks/components/TaskStatus";
 import CompletedTasksList from "./tasks/components/CompletedTaskList";
 import AllTasksList from "./tasks/components/TaskAll";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 
 export default function Page() {
   const [role, setRole] = useState<string>("user");
   const [selectedUser, setSelectedUser] = useState<string>("");
+    const router = useRouter();
+    
+      useEffect(() => {
+        const user = localStorage.getItem("user");
+        if (!user) {
+          router.push("/login");
+        }
+      }, [router]);
 
   useEffect(() => {
     const currentUser = JSON.parse(localStorage.getItem("user") || "{}");

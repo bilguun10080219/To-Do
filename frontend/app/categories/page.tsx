@@ -4,9 +4,17 @@ import Layout from "../components/layout";
 import Button from "../components/core/Button";
 import CategoriesList from "../components/categories/catagoriesList";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function CategoriesPage() {
      const router = useRouter();
+       
+         useEffect(() => {
+           const user = localStorage.getItem("user");
+           if (!user) {
+             router.push("/login");
+           }
+         }, [router]);
   return (
     <Layout>
       <div className="w-full max-w-5xl mx-auto bg-white rounded-xl shadow p-6">
