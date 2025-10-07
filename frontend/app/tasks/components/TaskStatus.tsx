@@ -8,6 +8,7 @@ import { Task } from "@/app/mock/tasks";
 interface TaskStatusProps {
   size?: number;
   strokeWidth?: number;
+  selectedUser?: string; // админ сонгосон хэрэглэгч
 }
 
 const STATUS_COLORS: Record<string, string> = {
@@ -21,29 +22,33 @@ const STATUS_ORDER = ["COMPLETED", "IN_PROGRESS", "PENDING"];
 export default function TaskStatus({
   size = 120,
   strokeWidth = 10,
+  selectedUser,
 }: TaskStatusProps) {
   const [tasks, setTasks] = useState<Task[]>([]);
 
   useEffect(() => {
-  const storedUser = localStorage.getItem("user");
-  if (!storedUser) return;
+    const storedUser = localStorage.getItem("user");
+    if (!storedUser) return;
 
-  const user = JSON.parse(storedUser);
-  const usernameParam = user.role === "ROLE_ADMIN" ? undefined : user.username;
+    const user = JSON.parse(storedUser);
+    // Админ хэрэглэгч сонгосон хэрэглэгчийг харна, бусад хэрэглэгч зөвхөн өөрийнхөө таскууд
+    const usernameParam =
+      user.role === "admin" ? selectedUser || undefined : user.username;
 
-  getTasks(usernameParam)
-    .then((data: Task[]) => {
-      console.log("ADMIN TASKS RAW DATA:", data); // <--- Add this
-      const normalizedTasks: Task[] = data.map((task) => {
-        let status = (task.status || "PENDING").toUpperCase();
-        if (!STATUS_ORDER.includes(status)) status = "PENDING";
-        return { ...task, status: status as "COMPLETED" | "IN_PROGRESS" | "PENDING" };
-      });
-      console.log("ADMIN TASKS NORMALIZED:", normalizedTasks); // <--- And this
-      setTasks(normalizedTasks);
-    })
-    .catch((err) => console.error(err));
-}, []);
+    getTasks(usernameParam)
+      .then((data: Task[]) => {
+        const normalizedTasks: Task[] = data.map((task) => {
+          let status = (task.status || "PENDING").toUpperCase();
+          if (!STATUS_ORDER.includes(status)) status = "PENDING";
+          return {
+            ...task,
+            status: status as "COMPLETED" | "IN_PROGRESS" | "PENDING",
+          };
+        });
+        setTasks(normalizedTasks);
+      })
+      .catch((err) => console.error(err));
+  }, [selectedUser]);
 
   const total = tasks.length;
   const counts: Record<string, number> = {
@@ -53,10 +58,9 @@ export default function TaskStatus({
   };
 
   tasks.forEach((task) => {
-    if (counts[task.status] !== undefined) {
-      counts[task.status] += 1;
-    }
+    if (counts[task.status] !== undefined) counts[task.status] += 1;
   });
+
   return (
     <div className="bg-white shadow-md rounded-2xl p-6 h-fit">
       {/* Title */}

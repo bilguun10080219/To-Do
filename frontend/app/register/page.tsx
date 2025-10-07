@@ -21,17 +21,17 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validation
+    // --- Validation ---
     if (!agreeTerms) {
-      alert("You must agree to the terms.");
-      return;
-    }
-    if (password !== confirmPassword) {
-      alert("Passwords do not match.");
+      alert("You must agree to the terms and conditions.");
       return;
     }
     if (!username || !email || !password) {
       alert("All fields are required.");
+      return;
+    }
+    if (password !== confirmPassword) {
+      alert("Passwords do not match.");
       return;
     }
 
@@ -45,7 +45,6 @@ export default function RegisterPage() {
       });
 
       if (res.ok) {
-        const user = await res.json();
         alert("Registration successful! You can now log in.");
         router.push("/login");
       } else {
@@ -53,29 +52,34 @@ export default function RegisterPage() {
         alert(msg || "Registration failed");
       }
     } catch (err) {
-      console.error(err);
-      alert("Error connecting to server");
+      console.error("Error:", err);
+      alert("Error connecting to the server.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex flex-col px-28 items-center justify-center min-h-screen bg-[#FF6767]">
+    <div className="flex items-center justify-center min-h-screen bg-[#FF6767] px-28">
       <Form
         onSubmit={handleSubmit}
         className="w-full bg-white p-6 rounded-2xl shadow-md"
       >
         <div className="flex flex-row justify-between">
+          {/* --- Left: Illustration --- */}
           <img
             src="/ach3%201.png"
             alt="Register illustration"
             className="object-contain w-[400px] h-[400px]"
           />
 
-          <div className="flex flex-col w-full items-start gap-2">
-            <h1 className="text-2xl font-semibold mb-6 text-center">Sign Up</h1>
+          {/* --- Right: Form --- */}
+          <div className="flex flex-col w-full items-start gap-4">
+            <h1 className="text-2xl font-semibold mb-4 text-center w-full">
+              Sign Up
+            </h1>
 
+            {/* Username */}
             <FormItem label="Username">
               <div className="relative w-full">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 text-black w-5 h-5" />
@@ -83,13 +87,14 @@ export default function RegisterPage() {
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  placeholder="Username"
+                  placeholder="Enter your username"
                   className="pl-10"
                   required
                 />
               </div>
             </FormItem>
 
+            {/* Email */}
             <FormItem label="Email">
               <div className="relative w-full">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-black w-5 h-5" />
@@ -97,13 +102,14 @@ export default function RegisterPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Email"
+                  placeholder="Enter your email"
                   className="pl-10"
                   required
                 />
               </div>
             </FormItem>
 
+            {/* Password */}
             <FormItem label="Password">
               <div className="relative w-full">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-black w-5 h-5" />
@@ -111,13 +117,14 @@ export default function RegisterPage() {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Password"
+                  placeholder="Enter your password"
                   className="pl-10"
                   required
                 />
               </div>
             </FormItem>
 
+            {/* Confirm Password */}
             <FormItem label="Confirm Password">
               <div className="relative w-full">
                 <ShieldCheck className="absolute left-3 top-1/2 -translate-y-1/2 text-black w-5 h-5" />
@@ -125,32 +132,36 @@ export default function RegisterPage() {
                   type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Confirm Password"
+                  placeholder="Confirm your password"
                   className="pl-10"
                   required
                 />
               </div>
             </FormItem>
 
+            {/* Terms Checkbox */}
             <FormItem>
               <label className="flex items-center gap-2 text-sm">
                 <input
                   type="checkbox"
                   checked={agreeTerms}
                   onChange={(e) => setAgreeTerms(e.target.checked)}
+                  className="w-4 h-4"
                 />
                 I agree to the terms and conditions
               </label>
             </FormItem>
 
+            {/* Submit */}
             <Button type="submit" className="mt-4" disabled={loading}>
               {loading ? "Registering..." : "Register"}
             </Button>
 
-            <p className="text-center mt-4 text-sm text-gray-500">
+            {/* Link to Login */}
+            <p className="text-center mt-4 text-sm text-gray-500 w-full">
               Already have an account?{" "}
               <span
-                className="text-blue-600 cursor-pointer"
+                className="text-blue-600 cursor-pointer hover:underline"
                 onClick={() => router.push("/login")}
               >
                 Sign In

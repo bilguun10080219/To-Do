@@ -8,18 +8,17 @@ import AllTasksList from "./tasks/components/TaskAll";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
-
 export default function Page() {
   const [role, setRole] = useState<string>("user");
   const [selectedUser, setSelectedUser] = useState<string>("");
-    const router = useRouter();
-    
-      useEffect(() => {
-        const user = localStorage.getItem("user");
-        if (!user) {
-          router.push("/login");
-        }
-      }, [router]);
+  const router = useRouter();
+
+  useEffect(() => {
+    const user = localStorage.getItem("user");
+    if (!user) {
+      router.push("/login");
+    }
+  }, [router]);
 
   useEffect(() => {
     const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
@@ -70,7 +69,7 @@ export default function Page() {
 
           {/* Баруун тал - TaskStatus + CompletedTasksList */}
           <div className="flex-1 flex flex-col gap-6">
-            <TaskStatus />
+            <TaskStatus selectedUser={selectedUser} />
             <CompletedTasksList />
           </div>
         </div>
