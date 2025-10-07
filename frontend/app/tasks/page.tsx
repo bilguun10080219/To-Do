@@ -42,23 +42,26 @@ export default function TasksPage() {
   }, [role]);
 
 
-const fetchTasks = async () => {
-  try {
-    const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
-    let data;
-    if (currentUser.role === "admin") {
-      data = await getTasks("", searchQuery); 
-    } 
-    else {
-      data = await getTasks(currentUser.username, searchQuery);
+  const fetchTasks = async () => {
+    try {
+      let data;
+
+      if (role === "admin") {
+        if (selectedUser) {
+          data = await getTasks(selectedUser, searchQuery);
+        } else {
+          data = await getTasks("", searchQuery);
+        }
+      } else {
+        const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+        data = await getTasks(currentUser.username, searchQuery);
+      }
+
+      setTasks(data);
+    } catch (err) {
+      console.error(err);
     }
-
-    setTasks(data);
-  } catch (err) {
-    console.error(err);
-  }
-};
-
+  };
 
 
   useEffect(() => {
