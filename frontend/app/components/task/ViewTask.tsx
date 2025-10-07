@@ -14,31 +14,24 @@ export default function ViewTask() {
   const [task, setTask] = useState<Task | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
-  console.log("ViewTask component mounted, id =", id);
 
 
   const fetchTask = async () => {
   try {
-    setLoading(true);
-    const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
-    console.log("Current user from localStorage:", currentUser);
+            setLoading(true);
+            const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
 
-    if (!id || !currentUser.username) {
-      console.error("Missing id or username");
-      return;
-    }
+            if (!id || !currentUser.username) return;
 
-    const t = await getTaskById(Number(id), currentUser.username);
-    console.log("Fetched task from backend:", t);
-
-    setTask(t);
-  } catch (err) {
-    console.error("Error fetching task:", err);
-    setTask(null);
-  } finally {
-    setLoading(false);
-  }
-};
+            const t = await getTaskById(Number(id), currentUser.role === "admin" ? "" : currentUser.username);
+            setTask(t);
+        } catch (err) {
+            console.error("Error fetching task:", err);
+            setTask(null);
+        } finally {
+            setLoading(false);
+        }
+    };
 
   useEffect(() => {
     fetchTask();

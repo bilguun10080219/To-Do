@@ -23,23 +23,27 @@ export default function TaskStatus({
   strokeWidth = 10,
 }: TaskStatusProps) {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (!storedUser) return;
+  const storedUser = localStorage.getItem("user");
+  if (!storedUser) return;
 
-    const user = JSON.parse(storedUser);
-    const username = user?.username;
-    if (!username) return;
+  const user = JSON.parse(storedUser);
+  const usernameParam = user.role === "ROLE_ADMIN" ? undefined : user.username;
 
-    getTasks(username)
-      .then((data: Task[]) => {
-        console.log("Tasks from backend:", data); // 👈 энд шалгах
-        setTasks(data);
-      })
-      .catch((err) => console.error(err));
-  }, []);
+  getTasks(usernameParam)
+    .then((data: Task[]) => {
+      console.log("ADMIN TASKS RAW DATA:", data); // <--- Add this
+      const normalizedTasks: Task[] = data.map((task) => {
+        let status = (task.status || "PENDING").toUpperCase();
+        if (!STATUS_ORDER.includes(status)) status = "PENDING";
+        return { ...task, status: status as "COMPLETED" | "IN_PROGRESS" | "PENDING" };
+      });
+      console.log("ADMIN TASKS NORMALIZED:", normalizedTasks); // <--- And this
+      setTasks(normalizedTasks);
+    })
+    .catch((err) => console.error(err));
+}, []);
 
   const total = tasks.length;
   const counts: Record<string, number> = {

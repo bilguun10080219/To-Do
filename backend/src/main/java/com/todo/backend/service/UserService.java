@@ -4,6 +4,7 @@ import com.todo.backend.entity.User;
 import com.todo.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -20,6 +21,10 @@ public class UserService {
 
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
+    }
+
+    public List<User> findAll() {
+        return userRepository.findAll();
     }
 
     public User updateUser(String currentUsername, String newUsername, String newEmail) {

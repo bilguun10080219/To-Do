@@ -34,33 +34,56 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public TaskResponse getTaskById(Long id, User user) {
-    Task task = taskRepository.findByIdAndUser(id, user)
-        .orElseThrow(() -> new RuntimeException("Task not found or not yours"));
-    return toResponse(task);
-}
+        Task task;
+        if (user == null || "ROLE_ADMIN".equalsIgnoreCase(user.getRole())) {
+            task = taskRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Task not found"));
+        } else {
+            task = taskRepository.findByIdAndUser(id, user)
+                    .orElseThrow(() -> new RuntimeException("Task not found or not yours"));
+        }
+        return toResponse(task);
+    }
 
     @Override
     public List<TaskResponse> getTasks(User user) {
-        return taskRepository.findByUser(user)
-                .stream()
-                .map(this::toResponse)
-                .collect(Collectors.toList());
+        List<Task> tasks;
+        if (user == null || "ROLE_ADMIN".equalsIgnoreCase(user.getRole())) {
+            tasks = taskRepository.findAll();
+        } else {
+            tasks = taskRepository.findByUser(user);
+        }
+        return tasks.stream().map(this::toResponse).collect(Collectors.toList());
     }
 
     @Override
     public List<TaskResponse> searchTasks(User user, String search) {
-        return taskRepository
-            .searchByUserAndNameOrDescription(user, search)
-            .stream()
-            .map(this::toResponse)
-            .collect(Collectors.toList());
+        List<Task> tasks;
+        if (user == null || "ROLE_ADMIN".equalsIgnoreCase(user.getRole())) {
+            tasks = taskRepository.searchByNameOrDescription(search);
+        } else {
+            tasks = taskRepository.searchByUserAndNameOrDescription(user, search);
+        }
+        return tasks.stream().map(this::toResponse).collect(Collectors.toList());
     }
 
     @Override
+    public List<TaskResponse> getAllTasks() {
+        List<Task> tasks = taskRepository.findAll();
+        return tasks.stream().map(this::toResponse).collect(Collectors.toList());
+    }
+
+
+    @Override
     public TaskResponse updateTask(Long id, TaskRequest request, User user) {
-        Task task = taskRepository.findById(id)
-                .filter(t -> t.getUser().equals(user))
-                .orElseThrow(() -> new RuntimeException("Task not found or not yours"));
+        Task task;
+        if (user == null || "ROLE_ADMIN".equalsIgnoreCase(user.getRole())) {
+            task = taskRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Task not found"));
+        } else {
+            task = taskRepository.findByIdAndUser(id, user)
+                    .orElseThrow(() -> new RuntimeException("Task not found or not yours"));
+        }
 
         task.setName(request.getName());
         task.setDescription(request.getDescription());
@@ -73,9 +96,14 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public void deleteTask(Long id, User user) {
-        Task task = taskRepository.findById(id)
-                .filter(t -> t.getUser().equals(user))
-                .orElseThrow(() -> new RuntimeException("Task not found or not yours"));
+        Task task;
+        if (user == null || "ROLE_ADMIN".equalsIgnoreCase(user.getRole())) {
+            task = taskRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Task not found"));
+        } else {
+            task = taskRepository.findByIdAndUser(id, user)
+                    .orElseThrow(() -> new RuntimeException("Task not found or not yours"));
+        }
         taskRepository.delete(task);
     }
 

@@ -14,7 +14,7 @@ export default function AllTasksList({ selectedUser }: AllTasksListProps) {
     const [loading, setLoading] = useState(true);
     const [role, setRole] = useState<string>("user");
 
-    const fetchTasks = async (username?: string) => {
+    const fetchTasks = async () => {
         try {
             const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
             const currentRole = currentUser.role || "user";
@@ -23,15 +23,11 @@ export default function AllTasksList({ selectedUser }: AllTasksListProps) {
             let data: Task[] = [];
 
             if (currentRole === "admin") {
-                if (selectedUser) {
-                    data = await getTasks(selectedUser);
-                } else {
-                    data = await getTasks(""); 
-                }
+                // admin can see all or filtered by selectedUser
+                data = await getTasks(selectedUser || "");
             } else {
                 data = await getTasks(currentUser.username);
             }
-
 
             setTasks(data);
         } catch (err) {
@@ -42,9 +38,8 @@ export default function AllTasksList({ selectedUser }: AllTasksListProps) {
     };
 
     useEffect(() => {
-        fetchTasks(selectedUser);
+        fetchTasks();
     }, [selectedUser]);
-
 
     return (
         <div className="p-6 bg-white rounded-2xl shadow-md space-y-4 w-full">
@@ -58,7 +53,6 @@ export default function AllTasksList({ selectedUser }: AllTasksListProps) {
             {loading ? (
                 <p>Loading tasks...</p>
             ) : tasks.length === 0 ? (
-
                 <div className="flex flex-col items-center justify-center 
                         bg-gray-50 border border-dashed border-gray-300 
                         rounded-lg h-40 text-gray-400 gap-2">
@@ -67,11 +61,8 @@ export default function AllTasksList({ selectedUser }: AllTasksListProps) {
             ) : (
                 <div className="flex flex-col gap-3">
                     {tasks
-                        .filter(
-                            (task) =>
-                                task.status === "PENDING" || task.status === "IN_PROGRESS"
-                        )
-                        .map((task) => (
+                        .filter(task => task.status === "PENDING" || task.status === "IN_PROGRESS")
+                        .map(task => (
                             <TaskCard key={task.id} task={task} imageUrl={task.imageUrl} />
                         ))}
                 </div>

@@ -10,8 +10,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-@CrossOrigin(origins = "http://localhost:3000") //localhost
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/tasks")
 public class TaskController {
@@ -36,41 +37,57 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
-public ResponseEntity<?> getTaskById(@PathVariable Long id, @RequestParam String username) {
-    Optional<User> userOpt = userService.findByUsername(username);
-    if (userOpt.isEmpty()) return ResponseEntity.status(401).body("User not found");
+    public ResponseEntity<?> getTaskById(@PathVariable Long id,
+                                         @RequestParam(required = false) String username) {
+        User user = null;
+        if (username != null && !username.isBlank()) {
+            Optional<User> userOpt = userService.findByUsername(username);
+            if (userOpt.isEmpty()) return ResponseEntity.status(401).body("User not found");
+            user = userOpt.get();
+        }
 
-    TaskResponse task = taskService.getTaskById(id, userOpt.get());
-    return ResponseEntity.ok(task);
-}
-
+        try {
+            TaskResponse taskResponse = taskService.getTaskById(id, user);
+            return ResponseEntity.ok(taskResponse);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
+    }
 
     @GetMapping
-    public ResponseEntity<?> getTasks(
-            @RequestParam String username,
-            @RequestParam(required = false) String search
-        ) {
-        Optional<User> userOpt = userService.findByUsername(username);
-        if (userOpt.isEmpty()) return ResponseEntity.status(401).body("User not found");
-
+    public ResponseEntity<?> getTasks(@RequestParam(required = false) String username,
+                                      @RequestParam(required = false) String search) {
         List<TaskResponse> tasks;
-        if (search != null && !search.isBlank()) {
-            tasks = taskService.searchTasks(userOpt.get(), search);
+
+        if (username == null || username.isBlank()) {
+            // Admin: return all tasks
+            tasks = taskService.getAllTasks();
         } else {
-            tasks = taskService.getTasks(userOpt.get());
+            Optional<User> userOpt = userService.findByUsername(username);
+            if (userOpt.isEmpty()) return ResponseEntity.status(401).body("User not found");
+            User user = userOpt.get();
+
+            if (search != null && !search.isBlank()) {
+                tasks = taskService.searchTasks(user, search);
+            } else {
+                tasks = taskService.getTasks(user);
+            }
         }
+
         return ResponseEntity.ok(tasks);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateTask(@PathVariable Long id, @RequestBody TaskRequest request) {
-        Optional<User> userOpt = findUser(request);
-        if (userOpt.isEmpty()) return ResponseEntity.status(401).body("User not found");
-        return ResponseEntity.ok(taskService.updateTask(id, request, userOpt.get()));
+        Optional<User> userOpt = userService.findByUsername(request.getUsername());
+        User user = userOpt.orElse(null); // null = admin fallback
+        return ResponseEntity.ok(taskService.updateTask(id, request, user));
     }
 
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteTask(@PathVariable Long id, @RequestParam String username) {
+    public ResponseEntity<?> deleteTask(@PathVariable Long id,
+                                        @RequestParam String username) {
         Optional<User> userOpt = userService.findByUsername(username);
         if (userOpt.isEmpty()) return ResponseEntity.status(401).body("User not found");
         taskService.deleteTask(id, userOpt.get());
