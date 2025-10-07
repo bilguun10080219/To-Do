@@ -13,31 +13,58 @@ export default function TasksPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
   const [role, setRole] = useState("user");
+  const [selectedUser, setSelectedUser] = useState("");
+  const [users, setUsers] = useState([]);
+
 
   useEffect(() => {
     const user = localStorage.getItem("user");
     if (!user) {
       router.push("/login");
-    }else {
-  const parsed = JSON.parse(user);
-  setRole(parsed.role || "user"); 
-}
+    } else {
+      const parsed = JSON.parse(user);
+      setRole(parsed.role || "user");
+    }
   }, [router]);
 
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const res = await fetch("http://localhost:8080/api/users");
+        const data = await res.json();
+        setUsers(data);
+      } catch (err) {
+        console.error("Failed to fetch users", err);
+      }
+    };
 
-  const fetchTasks = async () => {
-    try {
-      const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
-      const data = await getTasks(currentUser.username, searchQuery);
-      setTasks(data);
-    } catch (err) {
-      console.error(err);
+    if (role === "admin") fetchUsers();
+  }, [role]);
+
+
+const fetchTasks = async () => {
+  try {
+    const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+    let data;
+    if (currentUser.role === "admin") {
+      data = await getTasks("", searchQuery); 
+    } 
+    else {
+      data = await getTasks(currentUser.username, searchQuery);
     }
-  };
+
+    setTasks(data);
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+
 
   useEffect(() => {
     fetchTasks();
-  }, [searchQuery]);
+  }, [searchQuery, selectedUser]);
+
 
   const handleDragEnd = async (result: DropResult) => {
     if (!result.destination) return;
@@ -72,6 +99,23 @@ export default function TasksPage() {
 
   return (
     <Layout onSearch={setSearchQuery}>
+      {role === "admin" && (
+        <div className="flex justify-between items-center gap-4 mb-4 bg-white p-4 rounded-xl shadow-sm">
+          <h2 className="text-lg font-semibold text-gray-700">Admin Panel</h2>
+          <select
+            value={selectedUser}
+            onChange={(e) => setSelectedUser(e.target.value)}
+            className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-700"
+          >
+            <option value="">Select a user</option>
+            {users.map((u) => (
+              <option key={u.username} value={u.username}>
+                {u.username}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
       <DragDropContext onDragEnd={handleDragEnd}>
         <div className="grid grid-cols-3 gap-4">
           <TaskList
