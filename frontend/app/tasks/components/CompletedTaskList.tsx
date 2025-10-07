@@ -6,7 +6,13 @@ import CompletedTask from "./CompletedTask";
 import { FileCheck } from "lucide-react";
 import { Task } from "@/app/mock/tasks";
 
-export default function CompletedTasksList() {
+interface CompletedTasksListProps {
+  selectedUser?: string; // админ сонгосон хэрэглэгч
+}
+
+export default function CompletedTasksList({
+  selectedUser,
+}: CompletedTasksListProps) {
   const [completedTasks, setCompletedTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -20,12 +26,8 @@ export default function CompletedTasksList() {
 
     try {
       const user = JSON.parse(storedUser);
-      const username = user.username;
-      if (!username) {
-        console.error("User has no username");
-        setLoading(false);
-        return;
-      }
+      const isAdmin = user.role === "admin";
+      const username = isAdmin ? selectedUser || undefined : user.username;
 
       getTasks(username)
         .then((tasks: Task[]) => {
@@ -38,8 +40,9 @@ export default function CompletedTasksList() {
       console.error("Invalid user data in localStorage");
       setLoading(false);
     }
-  }, []);
+  }, [selectedUser]); // selectedUser өөрчлөгдөхөд дахин fetch хийнэ
 
+  if (loading) return <p>Loading completed tasks...</p>;
   if (completedTasks.length === 0) return null;
 
   return (

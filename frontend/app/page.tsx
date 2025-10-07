@@ -70,7 +70,7 @@ export default function Page() {
           {/* Баруун тал - TaskStatus + CompletedTasksList */}
           <div className="flex-1 flex flex-col gap-6">
             <TaskStatus selectedUser={selectedUser} />
-            <CompletedTasksList />
+            <CompletedTasksList selectedUser={selectedUser} />
           </div>
         </div>
       </Layout>
