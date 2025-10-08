@@ -125,16 +125,19 @@ export default function TasksPage() {
             status="PENDING"
             role={role}
             tasks={tasks.filter((t) => t.status === "PENDING")}
+            selectedUser={selectedUser}
           />
           <TaskList
             status="IN_PROGRESS"
             role={role}
             tasks={tasks.filter((t) => t.status === "IN_PROGRESS")}
+            selectedUser={selectedUser}
           />
           <TaskList
             status="COMPLETED"
             role={role}
             tasks={tasks.filter((t) => t.status === "COMPLETED")}
+            selectedUser={selectedUser}
           />
         </div>
       </DragDropContext>

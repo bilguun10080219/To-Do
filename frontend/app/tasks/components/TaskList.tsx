@@ -11,9 +11,10 @@ interface TaskListProps {
   status?: string;
   tasks: Task[];
   role?: string;
+  selectedUser?: string;
 }
 
-export default function TaskList({ status = "", tasks, role }: TaskListProps) {
+export default function TaskList({ status = "", tasks, role, selectedUser }: TaskListProps) {
 
   const [isAdding, setIsAdding] = useState(false);
 
@@ -65,7 +66,7 @@ export default function TaskList({ status = "", tasks, role }: TaskListProps) {
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
                     >
-                      <TaskCard task={task} imageUrl={task.imageUrl} />
+                      <TaskCard task={task} imageUrl={task.imageUrl} selectedUser={selectedUser} />
                     </div>
                   )}
                 </Draggable>
