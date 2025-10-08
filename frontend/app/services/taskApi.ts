@@ -24,8 +24,15 @@ export const getTaskById = (id: number, username?: string) => {
 
 export const createTask = (task: any) => {
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+
+  // fix username if stored as email
+  const username =
+    currentUser.username?.includes("@")
+      ? currentUser.username.split("@")[0]
+      : currentUser.username;
+
   return axios
-    .post(BASE_URL, { ...task, username: currentUser.username })
+    .post("http://localhost:8080/api/tasks", { ...task, username })
     .then((res) => res.data);
 };
 

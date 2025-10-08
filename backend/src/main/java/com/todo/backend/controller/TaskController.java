@@ -30,11 +30,21 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createTask(@RequestBody TaskRequest request) {
-        Optional<User> userOpt = findUser(request);
-        if (userOpt.isEmpty()) return ResponseEntity.status(401).body("User not found");
-        return ResponseEntity.ok(taskService.createTask(request, userOpt.get()));
+public ResponseEntity<?> createTask(@RequestBody TaskRequest request) {
+    Optional<User> creatorOpt = userService.findByUsername(request.getUsername());
+    if (creatorOpt.isEmpty()) return ResponseEntity.status(401).body("Creator not found");
+    User creator = creatorOpt.get();
+
+    User assignedUser = creator; 
+    if ("ROLE_ADMIN".equalsIgnoreCase(creator.getRole()) && request.getAssignedUsername() != null) {
+        Optional<User> assignedOpt = userService.findByUsername(request.getAssignedUsername());
+        if (assignedOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body("Assigned user not found");
+        }
+        assignedUser = assignedOpt.get();
     }
+    return ResponseEntity.ok(taskService.createTask(request, assignedUser));
+}
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getTaskById(@PathVariable Long id,

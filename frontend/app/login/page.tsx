@@ -22,7 +22,7 @@ export default function LoginPage() {
 
     try {
       if (USE_FAKE_LOGIN) {
-        // --- FAKE LOGIN ---
+        // --- FAKE LOGIN (for testing without backend) ---
         const user =
           username === "admin@example.com" || username === "admin"
             ? { username, role: "admin", name: "Admin" }
@@ -31,7 +31,7 @@ export default function LoginPage() {
         localStorage.setItem("user", JSON.stringify(user));
         router.push("/");
       } else {
-        // --- REAL LOGIN ---
+        // --- REAL LOGIN (talks to Spring Boot backend) ---
         const res = await fetch("http://localhost:8080/api/auth/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -66,7 +66,6 @@ export default function LoginPage() {
           <div className="flex w-full flex-col gap-5 items-start">
             <h1 className="text-2xl font-semibold mb-6 text-center">Sign in</h1>
 
-            {/* Username */}
             <FormItem label="Username">
               <div className="relative w-full">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 text-black w-5 h-5" />
@@ -81,7 +80,6 @@ export default function LoginPage() {
               </div>
             </FormItem>
 
-            {/* Password */}
             <FormItem label="Password">
               <div className="relative w-full">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-black w-5 h-5" />
@@ -96,7 +94,6 @@ export default function LoginPage() {
               </div>
             </FormItem>
 
-            {/* Buttons */}
             <Button type="submit" className="mt-4" disabled={loading}>
               {loading ? "Logging in..." : "Login"}
             </Button>
@@ -131,7 +128,6 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* --- Right Side (Image) --- */}
           <img
             src="/ach3%201.png"
             alt="Login illustration"

@@ -7,6 +7,7 @@ import lombok.Data;
 @Data
 public class TaskRequest {
     private String username;
+    private String assignedUsername;
     private String name;
     private String description;
     private Priority priority;
