@@ -37,7 +37,6 @@ public class AuthController {
         user.setEmail(request.getEmail());
         user.setRole(request.getRole() == null ? "USER" : request.getRole());
 
-        // store plain password (for testing purposes only!)
         user.setPassword(request.getPassword());
 
         User saved = userService.save(user);

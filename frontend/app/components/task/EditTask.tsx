@@ -12,7 +12,9 @@ interface EditTaskProps {
 
 export default function EditTask({ task, onClose, onUpdated }: EditTaskProps) {
   const [title, setTitle] = useState(task.name);
-  const [createdDate, setCreatedDate] = useState(task.createdDate.split("T")[0]);
+  const [createdDate, setCreatedDate] = useState(
+  task.createdDate ? task.createdDate.split("T")[0] : ""
+);
   const [priority, setPriority] = useState<Priority>(task.priority);
   const [description, setDescription] = useState(task.description);
   const [loading, setLoading] = useState(false);

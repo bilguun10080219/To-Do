@@ -2,7 +2,6 @@ package com.todo.backend.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Data;
 
 @Entity
 @Table(name = "users")

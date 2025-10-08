@@ -12,13 +12,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            // IMPORTANT: use the lambda style with cors configuration
             .cors(cors -> {})
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // allow preflight
-                .requestMatchers("/api/auth/**").permitAll() // public endpoints
-                .anyRequest().permitAll() // for now, allow all other requests
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() 
+                .requestMatchers("/api/auth/**").permitAll()
+                .anyRequest().permitAll() 
             );
 
         return http.build();

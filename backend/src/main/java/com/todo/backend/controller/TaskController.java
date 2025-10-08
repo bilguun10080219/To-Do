@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -31,20 +30,35 @@ public class TaskController {
 
     @PostMapping
 public ResponseEntity<?> createTask(@RequestBody TaskRequest request) {
-    Optional<User> creatorOpt = userService.findByUsername(request.getUsername());
-    if (creatorOpt.isEmpty()) return ResponseEntity.status(401).body("Creator not found");
-    User creator = creatorOpt.get();
+    try {
+        Optional<User> creatorOpt = userService.findByUsername(request.getUsername());
+        User creator = creatorOpt.orElse(null);
 
-    User assignedUser = creator; 
-    if ("ROLE_ADMIN".equalsIgnoreCase(creator.getRole()) && request.getAssignedUsername() != null) {
-        Optional<User> assignedOpt = userService.findByUsername(request.getAssignedUsername());
-        if (assignedOpt.isEmpty()) {
-            return ResponseEntity.badRequest().body("Assigned user not found");
-        }
-        assignedUser = assignedOpt.get();
+        // Default assigned user is creator
+        User assignedUser = creator;
+
+        // If creator is admin and provided assigned username, try to find that user
+        if (creator != null 
+    && creator.getRole() != null 
+    && creator.getRole().toUpperCase().contains("ADMIN")
+    && request.getAssignedUsername() != null) {
+    
+    Optional<User> assignedOpt = userService.findByUsername(request.getAssignedUsername());
+    if (assignedOpt.isEmpty()) {
+        return ResponseEntity.badRequest().body("Assigned user not found");
     }
-    return ResponseEntity.ok(taskService.createTask(request, assignedUser));
+    assignedUser = assignedOpt.get();
 }
+
+        TaskResponse response = taskService.createTask(request, assignedUser);
+        return ResponseEntity.ok(response);
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        return ResponseEntity.status(500).body("Error creating task: " + e.getMessage());
+    }
+}
+
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getTaskById(@PathVariable Long id,
@@ -88,19 +102,46 @@ public ResponseEntity<?> createTask(@RequestBody TaskRequest request) {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateTask(@PathVariable Long id, @RequestBody TaskRequest request) {
-        Optional<User> userOpt = userService.findByUsername(request.getUsername());
-        User user = userOpt.orElse(null); // null = admin fallback
-        return ResponseEntity.ok(taskService.updateTask(id, request, user));
+public ResponseEntity<?> updateTask(@PathVariable Long id, @RequestBody TaskRequest request) {
+    Optional<User> userOpt = userService.findByUsername(request.getUsername());
+    User user = userOpt.orElse(null);
+
+    User assignedUser = user;
+
+    if (user != null 
+        && user.getRole() != null 
+        && user.getRole().toUpperCase().contains("ADMIN") 
+        && request.getAssignedUsername() != null) {
+        
+        Optional<User> assignedOpt = userService.findByUsername(request.getAssignedUsername());
+        if (assignedOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body("Assigned user not found");
+        }
+        assignedUser = assignedOpt.get();
     }
+
+    try {
+        return ResponseEntity.ok(taskService.updateTask(id, request, assignedUser));
+    } catch (RuntimeException e) {
+        return ResponseEntity.status(404).body(e.getMessage());
+    }
+}
 
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteTask(@PathVariable Long id,
-                                        @RequestParam String username) {
-        Optional<User> userOpt = userService.findByUsername(username);
-        if (userOpt.isEmpty()) return ResponseEntity.status(401).body("User not found");
-        taskService.deleteTask(id, userOpt.get());
-        return ResponseEntity.ok("Task deleted");
+public ResponseEntity<?> deleteTask(@PathVariable Long id,
+                                    @RequestParam String username) {
+    Optional<User> userOpt = userService.findByUsername(username);
+    if (userOpt.isEmpty()) {
+        return ResponseEntity.status(401).body("User not found");
     }
+
+    try {
+        taskService.deleteTask(id, userOpt.get());
+        return ResponseEntity.ok("Task deleted successfully");
+    } catch (RuntimeException e) {
+        return ResponseEntity.status(404).body(e.getMessage());
+    }
+}
+
 }

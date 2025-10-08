@@ -27,14 +27,12 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
-    // Update username/email/language
     @PutMapping("/update")
     public ResponseEntity<?> updateUser(@RequestBody UpdateUserRequest request) {
         User updated = userService.updateUser(request.getUsername(), request.getNewUsername(), request.getNewEmail());
         return ResponseEntity.ok(updated);
     }
 
-    // Change password
     @PutMapping("/change-password")
     public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest request) {
         userService.changePassword(request.getUsername(), request.getCurrentPassword(), request.getNewPassword());
