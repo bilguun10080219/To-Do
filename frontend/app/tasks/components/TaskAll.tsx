@@ -24,11 +24,13 @@ export default function AllTasksList({ selectedUser }: AllTasksListProps) {
 
       let data: Task[] = [];
 
-      if (currentRole === "admin") {
-        data = await getTasks(selectedUser || "");
-      } else {
-        data = await getTasks(currentUser.username);
-      }
+if (currentRole?.toUpperCase() === "ADMIN") {
+  // Admin can see all or filter by selectedUser
+  data = await getTasks(selectedUser || "");
+} else {
+  data = await getTasks(currentUser.username);
+}
+
 
       setTasks(data);
     } catch (err) {
@@ -42,9 +44,20 @@ export default function AllTasksList({ selectedUser }: AllTasksListProps) {
     fetchTasks();
   }, [selectedUser]);
 
+<<<<<<< HEAD
   return (
     <div className="p-6 bg-white rounded-2xl shadow-md space-y-4 w-full">
       <h2 className="text-xl font-semibold mb-4 col-span-2">{t("All Tasks")}</h2>
+=======
+    return (
+        <div className="p-6 bg-white rounded-2xl shadow-md space-y-4 w-full">
+            <h2 className="text-xl font-semibold mb-4 col-span-2">All Tasks</h2>
+            {role?.toUpperCase() === "ADMIN" && selectedUser && (
+                <span className="text-sm text-gray-500">
+                    Viewing: <span className="font-medium text-gray-700">{selectedUser}</span>
+                </span>
+            )}
+>>>>>>> f8eef28 (gmail fix update)
 
       {role === "admin" && selectedUser && (
         <span className="text-sm text-gray-500">

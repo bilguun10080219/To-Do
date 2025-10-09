@@ -18,22 +18,24 @@ export default function ViewTask() {
   const { t } = useTranslation();
 
   const fetchTask = async () => {
-    try {
-      setLoading(true);
-      const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
-      if (!id || !currentUser.username) return;
-      const tData = await getTaskById(
-        Number(id),
-        currentUser.role === "admin" ? "" : currentUser.username
-      );
-      setTask(tData);
-    } catch (err) {
-      console.error("Error fetching task:", err);
-      setTask(null);
-    } finally {
-      setLoading(false);
-    }
-  };
+try {
+  setLoading(true);
+  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+
+  if (!id || !currentUser.username) return;
+
+  const tData = await getTaskById(
+    Number(id),
+    currentUser.role?.toUpperCase() === "ADMIN" ? "" : currentUser.username
+  );
+  setTask(tData);
+} catch (err) {
+  console.error("Error fetching task:", err);
+  setTask(null);
+} finally {
+  setLoading(false);
+}
+
 
   useEffect(() => {
     fetchTask();

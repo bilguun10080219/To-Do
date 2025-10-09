@@ -39,14 +39,15 @@ export default function Page() {
       }
     };
 
-    if (role === "admin") fetchUsers();
+    if (role?.toUpperCase() === "ADMIN") fetchUsers();
   }, [role]);
 
   return (
     <div>
       <Layout>
-        {/* ✅ Админ үед хэрэглэгч сонгох хэсэг */}
-        {role === "admin" && (
+{/* ✅ Админ үед хэрэглэгч сонгох хэсэг */}
+{role?.toUpperCase() === "ADMIN" && (
+
           <div className="flex justify-between items-center gap-4 mb-4 bg-white p-4 rounded-xl shadow-sm">
             <h2 className="text-lg font-semibold text-gray-700">
               {t("Admin Panel")}

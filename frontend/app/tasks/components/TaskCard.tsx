@@ -61,7 +61,7 @@ export default function TaskCard({
     >
       <div className="flex flex-col p-6 border rounded-xl hover:shadow-lg transition gap-3">
         {typeof window !== "undefined" &&
-          JSON.parse(localStorage.getItem("user") || "{}")?.role === "admin" && (
+          JSON.parse(localStorage.getItem("user") || "{}")?.role?.toUpperCase() === "ADMIN" && (
             <div className="text-sm text-gray-500">
               {t("Assigned to")}:{" "}
               <span className="font-medium text-gray-700">

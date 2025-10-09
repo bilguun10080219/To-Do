@@ -34,7 +34,7 @@ export default function TaskStatus({
 
     const user = JSON.parse(storedUser);
     const usernameParam =
-      user.role === "admin" ? selectedUser || undefined : user.username;
+      user.role?.toUpperCase() === "ADMIN" ? selectedUser || undefined : user.username;
 
     getTasks(usernameParam)
       .then((data: Task[]) => {

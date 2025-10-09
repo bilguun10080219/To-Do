@@ -39,13 +39,14 @@ export default function TasksPage() {
       }
     };
 
-    if (role === "admin") fetchUsers();
+    if (role?.toUpperCase() === "ADMIN") fetchUsers();
   }, [role]);
 
   const fetchTasks = async () => {
     try {
       let data;
-      if (role === "admin") {
+if (role?.toUpperCase() === "ADMIN") {
+
         if (selectedUser) {
           data = await getTasks(selectedUser, searchQuery);
         } else {
@@ -99,7 +100,7 @@ export default function TasksPage() {
 
   return (
     <Layout onSearch={setSearchQuery}>
-      {role === "admin" && (
+      {role?.toUpperCase() === "ADMIN" && (
         <div className="flex justify-between items-center gap-4 mb-4 bg-white p-4 rounded-xl shadow-sm">
           <h2 className="text-lg font-semibold text-gray-700">{t("Admin Panel")}</h2>
           <select

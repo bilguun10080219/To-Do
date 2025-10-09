@@ -28,7 +28,7 @@ export default function CompletedTasksList({
 
     try {
       const user = JSON.parse(storedUser);
-      const isAdmin = user.role === "admin";
+      const isAdmin = user.role?.toUpperCase() === "ADMIN";
       const username = isAdmin ? selectedUser || undefined : user.username;
 
       getTasks(username)
