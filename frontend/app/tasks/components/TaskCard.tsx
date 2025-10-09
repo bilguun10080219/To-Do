@@ -4,17 +4,24 @@ import { Task } from "@/app/mock/tasks";
 import cn from "classnames";
 import { MouseEventHandler } from "react";
 import { useRouter } from "next/navigation";
-
-import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface TaskCardProps {
   task: Task;
-  imageUrl?: string; // шинэ prop
+  imageUrl?: string;
   onClick?: MouseEventHandler<HTMLDivElement>;
   selectedUser?: string;
 }
 
-export default function TaskCard({ task, imageUrl, onClick, selectedUser, }: TaskCardProps) {
+export default function TaskCard({
+  task,
+  imageUrl,
+  onClick,
+  selectedUser,
+}: TaskCardProps) {
+  const { t } = useTranslation();
+  const router = useRouter();
+
   const mapPriorityColor = (priority: string) => {
     switch (priority) {
       case "Extremely":
@@ -41,10 +48,11 @@ export default function TaskCard({ task, imageUrl, onClick, selectedUser, }: Tas
         return "text-gray-500";
     }
   };
-  const router = useRouter();
+
   const handleClick = () => {
     router.push(`/tasks/${task.id}`);
   };
+
   return (
     <div
       className="task-card relative"
@@ -52,11 +60,10 @@ export default function TaskCard({ task, imageUrl, onClick, selectedUser, }: Tas
       style={{ cursor: "pointer" }}
     >
       <div className="flex flex-col p-6 border rounded-xl hover:shadow-lg transition gap-3">
-
         {typeof window !== "undefined" &&
           JSON.parse(localStorage.getItem("user") || "{}")?.role === "admin" && (
             <div className="text-sm text-gray-500">
-              Assigned to:{" "}
+              {t("Assigned to")}:{" "}
               <span className="font-medium text-gray-700">
                 {task.username || selectedUser || ""}
               </span>
@@ -65,14 +72,11 @@ export default function TaskCard({ task, imageUrl, onClick, selectedUser, }: Tas
 
         <div className="flex flex-row gap-4 items-start">
           <div
-            className={cn(
-              "w-4 h-4 rounded-full border-2 bg-white mt-1",
-              {
-                "border-[#F21E1E]": task.status === "PENDING",
-                "border-[#0225FF]": task.status === "IN_PROGRESS",
-                "border-[#05A301]": task.status === "COMPLETED",
-              }
-            )}
+            className={cn("w-4 h-4 rounded-full border-2 bg-white mt-1", {
+              "border-[#F21E1E]": task.status === "PENDING",
+              "border-[#0225FF]": task.status === "IN_PROGRESS",
+              "border-[#05A301]": task.status === "COMPLETED",
+            })}
           ></div>
 
           <div className="flex-1 flex flex-col">
@@ -93,19 +97,20 @@ export default function TaskCard({ task, imageUrl, onClick, selectedUser, }: Tas
 
         <div className="flex justify-between text-xs text-gray-600 pt-2 border-t border-gray-100">
           <div>
-            Priority:{" "}
+            {t("Priority")}:{" "}
             <span className={cn(mapPriorityColor(task.priority))}>
-              {task.priority}
+              {t(task.priority)}
             </span>
           </div>
           <div>
-            Status:{" "}
+            {t("Status")}:{" "}
             <span className={cn(mapStatusColor(task.status))}>
-              {task.status}
+              {t(task.status)}
             </span>
           </div>
           <div className="text-gray-400">
-            Created on: {new Date(task.createdDate).toLocaleDateString()}
+            {t("Created on")}:{" "}
+            {new Date(task.createdDate).toLocaleDateString()}
           </div>
         </div>
       </div>

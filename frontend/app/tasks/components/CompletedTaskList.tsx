@@ -5,9 +5,10 @@ import { getTasks } from "@/app/services/taskApi";
 import CompletedTask from "./CompletedTask";
 import { FileCheck } from "lucide-react";
 import { Task } from "@/app/mock/tasks";
+import { useTranslation } from "react-i18next";
 
 interface CompletedTasksListProps {
-  selectedUser?: string; // админ сонгосон хэрэглэгч
+  selectedUser?: string;
 }
 
 export default function CompletedTasksList({
@@ -15,6 +16,7 @@ export default function CompletedTasksList({
 }: CompletedTasksListProps) {
   const [completedTasks, setCompletedTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -40,20 +42,18 @@ export default function CompletedTasksList({
       console.error("Invalid user data in localStorage");
       setLoading(false);
     }
-  }, [selectedUser]); // selectedUser өөрчлөгдөхөд дахин fetch хийнэ
+  }, [selectedUser]);
 
-  if (loading) return <p>Loading completed tasks...</p>;
+  if (loading) return <p>{t("Loading completed tasks...")}</p>;
   if (completedTasks.length === 0) return null;
 
   return (
     <div className="bg-white shadow-md rounded-2xl p-6 h-fit">
-      {/* Header */}
       <div className="flex items-center gap-2 mb-4 text-[#FF6767] font-semibold text-lg">
         <FileCheck className="w-5 h-5 text-gray-700" />
-        Completed tasks
+        {t("Completed tasks")}
       </div>
 
-      {/* Task List */}
       <div className="flex flex-col gap-4">
         {completedTasks.map((task) => (
           <CompletedTask key={task.id} task={task} imageUrl={task.imageUrl} />

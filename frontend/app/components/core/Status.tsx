@@ -1,6 +1,7 @@
 // app/components/core/Status.tsx
 import React from "react";
 import cn from "classnames";
+import { useTranslation } from "react-i18next";
 
 type StatusType = "completed" | "in-progress" | "not-completed";
 
@@ -9,6 +10,7 @@ interface StatusProps {
 }
 
 export default function Status({ status }: StatusProps) {
+  const { t } = useTranslation();
   const baseStyles = "px-3 py-1 rounded-full text-sm font-medium inline-block";
 
   const statusStyles = cn({
@@ -18,9 +20,9 @@ export default function Status({ status }: StatusProps) {
   });
 
   const label = {
-    completed: "Completed",
-    "in-progress": "In Progress",
-    "not-completed": "Not Completed",
+    completed: t("Completed"),
+    "in-progress": t("In Progress"),
+    "not-completed": t("Not Completed"),
   }[status];
 
   return <span className={cn(baseStyles, statusStyles)}>{label}</span>;

@@ -5,6 +5,9 @@ import cn from "classnames";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 import { usePathname } from "next/navigation";
+import { useTranslation } from "react-i18next";
+import "@/app/i18n";
+
 
 interface LayoutProps {
   children: ReactNode;
@@ -15,12 +18,13 @@ interface LayoutProps {
 export default function Layout({ children, className, onSearch }: LayoutProps) {
   const [username, setUsername] = useState<string>("");
   const pathname = usePathname();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       const user = JSON.parse(storedUser);
-      setUsername(user.username); 
+      setUsername(user.username);
     }
   }, []);
 
@@ -31,7 +35,7 @@ export default function Layout({ children, className, onSearch }: LayoutProps) {
         className
       )}
     >
-      <Header onSearch={onSearch}/>
+      <Header onSearch={onSearch} />
 
       <div className="flex-1 flex flex-row">
         <div className="flex flex-row w-full">
@@ -41,7 +45,7 @@ export default function Layout({ children, className, onSearch }: LayoutProps) {
               {/* ✅ Зөвхөн Dashboard дээр welcome текст */}
               {pathname === "/" && username && (
                 <span className="font-medium text-4xl text-black">
-                  Welcome back, {username}
+                  {t("Welcome back")}, {username}
                 </span>
               )}
 

@@ -12,10 +12,12 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { User } from "@/app/mock/auth";
+import { useTranslation } from "react-i18next";
 
 export default function Sidebar() {
   const pathname = usePathname();
   const [user, setUser] = useState<User | null>(null);
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -30,11 +32,12 @@ export default function Sidebar() {
   }, []);
 
   const links = [
-    { href: "/", label: "Dashboard", icon: <LayoutDashboard size={24} /> },
-    { href: "/tasks", label: "Tasks", icon: <FileCheck size={24} /> },
-    { href: "/categories", label: "Task Categories", icon: <List size={20} /> },
-    { href: "/settings", label: "Settings", icon: <Settings size={20} /> },
+    { href: "/", label: t("Dashboard"), icon: <LayoutDashboard size={24} /> },
+    { href: "/tasks", label: t("Tasks"), icon: <FileCheck size={24} /> },
+    { href: "/categories", label: t("Task Categories"), icon: <List size={20} /> },
+    { href: "/settings", label: t("Settings"), icon: <Settings size={20} /> },
   ];
+
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -82,7 +85,7 @@ export default function Sidebar() {
         className="flex items-center gap-2 mb-4 p-3 rounded-lg transition-colors hover:bg-white hover:text-red-500"
       >
         <LogOut size={20} />
-        Logout
+        {t("Logout")}
       </button>
 
       <div className="mt-auto text-sm opacity-80">v1.0.0</div>

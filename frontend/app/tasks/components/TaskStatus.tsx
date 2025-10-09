@@ -4,11 +4,12 @@ import React, { useEffect, useState } from "react";
 import { getTasks } from "@/app/services/taskApi";
 import { FileCheck2 } from "lucide-react";
 import { Task } from "@/app/mock/tasks";
+import { useTranslation } from "react-i18next";
 
 interface TaskStatusProps {
   size?: number;
   strokeWidth?: number;
-  selectedUser?: string; // админ сонгосон хэрэглэгч
+  selectedUser?: string;
 }
 
 const STATUS_COLORS: Record<string, string> = {
@@ -25,13 +26,13 @@ export default function TaskStatus({
   selectedUser,
 }: TaskStatusProps) {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (!storedUser) return;
 
     const user = JSON.parse(storedUser);
-    // Админ хэрэглэгч сонгосон хэрэглэгчийг харна, бусад хэрэглэгч зөвхөн өөрийнхөө таскууд
     const usernameParam =
       user.role === "admin" ? selectedUser || undefined : user.username;
 
@@ -63,13 +64,11 @@ export default function TaskStatus({
 
   return (
     <div className="bg-white shadow-md rounded-2xl p-6 h-fit">
-      {/* Title */}
       <div className="flex items-center gap-2 mb-4 text-[#FF6767] font-semibold text-lg">
         <FileCheck2 className="w-5 h-5 text-gray-700" />
-        Task Status
+        {t("Task Status")}
       </div>
 
-      {/* Circles */}
       <div className="flex gap-6 justify-center items-center">
         {STATUS_ORDER.map((status) => {
           const count = counts[status];
@@ -82,7 +81,6 @@ export default function TaskStatus({
           return (
             <div key={status} className="flex flex-col items-center">
               <svg width={size} height={size}>
-                {/* background circle */}
                 <circle
                   r={radius}
                   cx={size / 2}
@@ -91,7 +89,6 @@ export default function TaskStatus({
                   stroke="#e5e7eb"
                   strokeWidth={strokeWidth}
                 />
-                {/* progress circle */}
                 <circle
                   r={radius}
                   cx={size / 2}
@@ -105,7 +102,6 @@ export default function TaskStatus({
                   transform={`rotate(-90 ${size / 2} ${size / 2})`}
                   className="transition-all"
                 />
-                {/* percentage text */}
                 <text
                   x="50%"
                   y="50%"
@@ -117,7 +113,9 @@ export default function TaskStatus({
                   {percentText}%
                 </text>
               </svg>
-              <span className="mt-2 text-sm text-gray-700">{status}</span>
+              <span className="mt-2 text-sm text-gray-700">
+                {t(status.replace("_", " "))}
+              </span>
             </div>
           );
         })}

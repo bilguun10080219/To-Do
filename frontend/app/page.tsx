@@ -7,11 +7,13 @@ import CompletedTasksList from "./tasks/components/CompletedTaskList";
 import AllTasksList from "./tasks/components/TaskAll";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next"; 
 
 export default function Page() {
   const [role, setRole] = useState<string>("user");
   const [selectedUser, setSelectedUser] = useState<string>("");
   const router = useRouter();
+  const { t } = useTranslation(); 
 
   useEffect(() => {
     const user = localStorage.getItem("user");
@@ -43,16 +45,18 @@ export default function Page() {
   return (
     <div>
       <Layout>
-        {/* Админ үед хэрэглэгч сонгох хэсэг */}
+        {/* ✅ Админ үед хэрэглэгч сонгох хэсэг */}
         {role === "admin" && (
           <div className="flex justify-between items-center gap-4 mb-4 bg-white p-4 rounded-xl shadow-sm">
-            <h2 className="text-lg font-semibold text-gray-700">Admin Panel</h2>
+            <h2 className="text-lg font-semibold text-gray-700">
+              {t("Admin Panel")}
+            </h2>
             <select
               value={selectedUser}
               onChange={(e) => setSelectedUser(e.target.value)}
               className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-700"
             >
-              <option value="">Select a user</option>
+              <option value="">{t("Select a user")}</option>
               {users.map((u) => (
                 <option key={u.username} value={u.username}>
                   {u.username}
@@ -67,7 +71,7 @@ export default function Page() {
             <AllTasksList selectedUser={selectedUser} />
           </div>
 
-          {/* Баруун тал - TaskStatus + CompletedTasksList */}
+          {/* Баруун тал — TaskStatus + CompletedTasksList */}
           <div className="flex-1 flex flex-col gap-6">
             <TaskStatus selectedUser={selectedUser} />
             <CompletedTasksList selectedUser={selectedUser} />

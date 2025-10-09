@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Task, Priority, Status } from "@/app/mock/tasks";
 import { createTask, uploadFile } from "@/app/services/taskApi";
+import { useTranslation } from "react-i18next";
 
 interface AddTaskProps {
   onClose: () => void;
@@ -20,6 +21,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
   const [role, setRole] = useState("USER");
   const [users, setUsers] = useState<string[]>([]);
   const [assignedUser, setAssignedUser] = useState("");
+  const { t } = useTranslation();
 
   useEffect(() => {
     const userStr = localStorage.getItem("user");
@@ -27,7 +29,6 @@ export default function AddTask({ onClose }: AddTaskProps) {
       const user = JSON.parse(userStr);
       setRole(user.role || "USER");
 
-      // If admin, fetch all users
       if ((user.role || "").toUpperCase() === "ADMIN") {
         fetch("http://localhost:8080/api/users")
           .then((res) => {
@@ -35,7 +36,6 @@ export default function AddTask({ onClose }: AddTaskProps) {
             return res.json();
           })
           .then((data: any[]) => {
-            // Expect data as array of users, map to usernames
             setUsers(data.map((u) => u.username));
           })
           .catch((err) => console.error("Failed to fetch users", err));
@@ -46,20 +46,17 @@ export default function AddTask({ onClose }: AddTaskProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
-
-    // Determine assigned user
     const assignedTo =
       role.toUpperCase() === "ADMIN" ? assignedUser : currentUser.username;
 
     if (role.toUpperCase() === "ADMIN" && !assignedTo) {
-      alert("Please select a user to assign this task to!");
+      alert(t("Please select a user to assign this task to!"));
       return;
     }
 
     setLoading(true);
     try {
       let imageUrl: string | undefined = undefined;
-
       if (image) {
         imageUrl = await uploadFile(image);
       }
@@ -70,8 +67,8 @@ export default function AddTask({ onClose }: AddTaskProps) {
         status,
         priority,
         description,
-        username: currentUser.username, // creator
-        assignedUsername: assignedTo,   // assignee
+        username: currentUser.username,
+        assignedUsername: assignedTo,
         imageUrl,
       };
 
@@ -79,7 +76,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
       onClose();
     } catch (err) {
       console.error(err);
-      alert("Failed to add task");
+      alert(t("Failed to add task"));
     } finally {
       setLoading(false);
     }
@@ -89,7 +86,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
     <div className="bg-[#F9F9F9] w-[918px] h-[708px] rounded-md border border-gray-300 shadow-2xl p-8">
       <form onSubmit={handleSubmit} className="h-full flex flex-col space-y-6">
         <div className="flex justify-between items-center pb-2">
-          <h2 className="text-xl font-bold text-gray-800">Add Task</h2>
+          <h2 className="text-xl font-bold text-gray-800">{t("Add Task")}</h2>
           <button
             type="button"
             onClick={onClose}
@@ -102,7 +99,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
         <div className="bg-[#FFFFFF] w-[794px] h-[476px] rounded-lg border border-gray-200 shadow p-8 space-y-6">
           <div>
             <label className="block text-sm font-bold text-gray-600 mb-1">
-              Title
+              {t("Title")}
             </label>
             <input
               type="text"
@@ -114,7 +111,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
 
           <div>
             <label className="block text-sm font-bold text-gray-600 mb-1">
-              Date
+              {t("Date")}
             </label>
             <input
               type="date"
@@ -127,7 +124,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
           <div className="flex gap-24">
             <div>
               <label className="block text-sm font-bold text-gray-600 mb-2">
-                Priority
+                {t("Priority")}
               </label>
               <div className="flex gap-6">
                 <label className="flex items-center gap-2">
@@ -138,7 +135,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
                     checked={priority === "Extremely"}
                     onChange={() => setPriority("Extremely")}
                   />
-                  <span className="text-red-600">Extreme</span>
+                  <span className="text-red-600">{t("Extreme")}</span>
                 </label>
                 <label className="flex items-center gap-2">
                   <input
@@ -148,7 +145,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
                     checked={priority === "Moderate"}
                     onChange={() => setPriority("Moderate")}
                   />
-                  <span className="text-blue-600">Moderate</span>
+                  <span className="text-blue-600">{t("Moderate")}</span>
                 </label>
                 <label className="flex items-center gap-2">
                   <input
@@ -158,7 +155,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
                     checked={priority === "Low"}
                     onChange={() => setPriority("Low")}
                   />
-                  <span className="text-green-600">Low</span>
+                  <span className="text-green-600">{t("Low")}</span>
                 </label>
               </div>
             </div>
@@ -166,7 +163,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
             {role.toUpperCase() === "ADMIN" && (
               <div>
                 <label className="block text-sm font-bold text-gray-600 mb-2">
-                  Assign to User
+                  {t("Assign to User")}
                 </label>
                 <select
                   id="assignedUser"
@@ -174,7 +171,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
                   onChange={(e) => setAssignedUser(e.target.value)}
                   className="w-64 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 bg-white"
                 >
-                  <option value="">Select a user...</option>
+                  <option value="">{t("Select a user...")}</option>
                   {users.map((username) => (
                     <option key={username} value={username}>
                       {username}
@@ -188,26 +185,26 @@ export default function AddTask({ onClose }: AddTaskProps) {
           <div className="grid sm:grid-cols-2 gap-6 flex-1">
             <div>
               <label className="block text-sm font-bold text-gray-600 mb-1">
-                Task Description
+                {t("Task Description")}
               </label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Start writing here..."
+                placeholder={t("Start writing here...")}
                 className="w-full border border-gray-300 rounded-md p-2 h-32 focus:outline-none focus:ring-2 focus:ring-orange-400"
               />
             </div>
             <div>
               <label className="block text-sm font-bold text-gray-600 mb-1">
-                Upload Image
+                {t("Upload Image")}
               </label>
               <div className="flex flex-col items-center justify-center border-2 border-dashed rounded-md p-6 text-gray-400">
                 {image ? (
                   <p>{image.name}</p>
                 ) : (
                   <>
-                    <p>Drag & Drop files here</p>
-                    <span className="my-2">or</span>
+                    <p>{t("Drag & Drop files here")}</p>
+                    <span className="my-2">{t("or")}</span>
                     <input
                       type="file"
                       onChange={(e) =>
@@ -220,7 +217,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
                       htmlFor="fileUpload"
                       className="cursor-pointer bg-gray-200 px-3 py-1 rounded hover:bg-gray-300"
                     >
-                      Browse
+                      {t("Browse")}
                     </label>
                   </>
                 )}
@@ -235,7 +232,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
             className="bg-orange-500 text-white px-6 py-2 rounded hover:bg-orange-600"
             disabled={loading}
           >
-            {loading ? "Uploading..." : "Save"}
+            {loading ? t("Uploading...") : t("Save")}
           </button>
         </div>
       </form>

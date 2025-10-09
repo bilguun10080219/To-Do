@@ -2,14 +2,16 @@
 
 import { useState } from "react";
 import { Task } from "@/app/mock/tasks";
+import { useTranslation } from "react-i18next"; 
 
 interface EditModalProps {
   onClose: () => void;
-  initialName?: string; // анхны нэрээ авч ирдэг бол энд авна
+  initialName?: string; 
 }
 
 export default function EditModal({ onClose, initialName = "" }: EditModalProps) {
   const [title, setTitle] = useState(initialName);
+  const { t } = useTranslation(); 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,9 +26,8 @@ export default function EditModal({ onClose, initialName = "" }: EditModalProps)
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="bg-[#F9F9F9] w-[918px] h-[708px] rounded-md border border-gray-300 shadow-2xl p-8">
         <form onSubmit={handleSubmit} className="h-full flex flex-col space-y-6">
-
           <div className="flex justify-between items-center pb-2">
-            <h2 className="text-xl font-bold text-gray-800">Edit Task</h2>
+            <h2 className="text-xl font-bold text-gray-800">{t("Edit Task")}</h2>
             <button
               type="button"
               onClick={onClose}
@@ -39,7 +40,7 @@ export default function EditModal({ onClose, initialName = "" }: EditModalProps)
           <div className="bg-white flex-1 rounded-lg border border-gray-200 shadow p-8 space-y-6">
             <div>
               <label className="block text-sm font-bold text-gray-600 mb-1">
-                Task Name
+                {t("Task Name")}
               </label>
               <input
                 type="text"
@@ -56,13 +57,13 @@ export default function EditModal({ onClose, initialName = "" }: EditModalProps)
               className="bg-gray-300 text-gray-700 px-6 py-2 rounded hover:bg-gray-400"
               onClick={onClose}
             >
-              Cancel
+              {t("Cancel")}
             </button>
             <button
               type="submit"
               className="bg-orange-500 text-white px-6 py-2 rounded hover:bg-orange-600"
             >
-              Update
+              {t("Update")}
             </button>
           </div>
         </form>

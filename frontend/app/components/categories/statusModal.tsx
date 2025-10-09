@@ -1,14 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslation } from "react-i18next"; 
 
 interface StatusModalProps {
   onClose: () => void;
-  initialValue?: string; // edit үед ашиглаж болно
+  initialValue?: string; 
 }
 
 export default function StatusModal({ onClose, initialValue = "" }: StatusModalProps) {
   const [statusName, setStatusName] = useState(initialValue);
+  const { t } = useTranslation(); 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,9 +25,10 @@ export default function StatusModal({ onClose, initialValue = "" }: StatusModalP
       <div className="bg-[#F9F9F9] w-[918px] h-[708px] rounded-md border border-gray-300 shadow-2xl p-8">
         <form onSubmit={handleSubmit} className="h-full flex flex-col space-y-6">
 
+          {/* Header */}
           <div className="flex justify-between items-center pb-2">
             <h2 className="text-xl font-bold text-gray-800">
-              {initialValue ? "Edit Task Status" : "Add Task Status"}
+              {initialValue ? t("Edit Task Status") : t("Add Task Status")}
             </h2>
             <button
               type="button"
@@ -36,34 +39,36 @@ export default function StatusModal({ onClose, initialValue = "" }: StatusModalP
             </button>
           </div>
 
+          {/* Body */}
           <div className="bg-white flex-1 rounded-lg border border-gray-200 shadow p-8 space-y-6">
             <div>
               <label className="block text-sm font-bold text-gray-600 mb-1">
-                Task Status Name
+                {t("Task Status Name")}
               </label>
               <input
                 type="text"
                 value={statusName}
                 onChange={(e) => setStatusName(e.target.value)}
-                placeholder="e.g. Completed"
+                placeholder={t("e.g. Completed")}
                 className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
               />
             </div>
           </div>
 
+          {/* Footer */}
           <div className="flex justify-end gap-3 pt-4">
             <button
               type="button"
               className="bg-gray-300 text-gray-700 px-6 py-2 rounded hover:bg-gray-400"
               onClick={onClose}
             >
-              Cancel
+              {t("Cancel")}
             </button>
             <button
               type="submit"
               className="bg-orange-500 text-white px-6 py-2 rounded hover:bg-orange-600"
             >
-              {initialValue ? "Update" : "Save"}
+              {initialValue ? t("Update") : t("Save")}
             </button>
           </div>
         </form>

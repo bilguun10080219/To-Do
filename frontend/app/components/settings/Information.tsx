@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { updateUser } from "@/app/services/userApi";
+import { useTranslation } from "react-i18next"; 
 
 interface InformationProps {
   user: {
@@ -16,6 +17,7 @@ export default function Information({ user, onSubmit }: InformationProps) {
   const [username, setUsername] = useState(user.username);
   const [email, setEmail] = useState(user.email);
   const [language, setLanguage] = useState<string>("");
+  const { t } = useTranslation(); 
 
   useEffect(() => {
     const savedLang = localStorage.getItem("language");
@@ -25,20 +27,24 @@ export default function Information({ user, onSubmit }: InformationProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await updateUser(user.username, username, email); // pass old username
-      alert("Profile updated successfully!");
+      await updateUser(user.username, username, email);
+      alert(t("Profile updated successfully!")); 
       localStorage.setItem("user", JSON.stringify({ username, email }));
       if (onSubmit) onSubmit({ username, email });
     } catch (err: any) {
       console.error(err);
-      alert("Failed to update profile: " + (err.response?.data || err.message));
+      alert(
+        t("Failed to update profile:") +
+          " " +
+          (err.response?.data || err.message)
+      ); 
     }
   };
 
   return (
     <div className="w-full bg-white rounded-xl p-6 mb-6 shadow-md max-w-lg">
       <h2 className="inline-block font-bold text-2xl border-b-2 border-orange-500 pb-3">
-        General Settings
+        {t("General Settings")} 
       </h2>
 
       <div className="flex items-center gap-4 my-6">
@@ -55,7 +61,7 @@ export default function Information({ user, onSubmit }: InformationProps) {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm mb-1">Username</label>
+          <label className="block text-sm mb-1">{t("Username")}</label> 
           <input
             type="text"
             value={username}
@@ -66,7 +72,7 @@ export default function Information({ user, onSubmit }: InformationProps) {
         </div>
 
         <div>
-          <label className="block text-sm mb-1">Email</label>
+          <label className="block text-sm mb-1">{t("Email")}</label> 
           <input
             type="email"
             value={email}
@@ -81,7 +87,7 @@ export default function Information({ user, onSubmit }: InformationProps) {
             type="submit"
             className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 transition"
           >
-            Save Changes
+            {t("Save Changes")} 
           </button>
           <button
             type="reset"
@@ -91,7 +97,7 @@ export default function Information({ user, onSubmit }: InformationProps) {
               setEmail(user.email);
             }}
           >
-            Cancel
+            {t("Cancel")} 
           </button>
         </div>
       </form>

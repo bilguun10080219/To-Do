@@ -6,6 +6,7 @@ import { Task } from "@/app/mock/tasks";
 import { Plus } from "lucide-react";
 import AddTask from "@/app/components/task/AddTask";
 import { Droppable, Draggable } from "@hello-pangea/dnd";
+import { useTranslation } from "react-i18next";
 
 interface TaskListProps {
   status?: string;
@@ -15,14 +16,14 @@ interface TaskListProps {
 }
 
 export default function TaskList({ status = "", tasks, role, selectedUser }: TaskListProps) {
-
   const [isAdding, setIsAdding] = useState(false);
+  const { t } = useTranslation();
 
   return (
     <div className="p-6 bg-white min-h-full rounded-2xl shadow-md">
       {/* Header */}
       <div className="flex items-center justify-between mb-4 gap-8 flex-wrap">
-        <h2 className="text-xl font-semibold">{status.replace("_", " ")}</h2>
+        <h2 className="text-xl font-semibold">{t(status)}</h2>
         {status === "PENDING" && (
           <button
             onClick={() => setIsAdding(true)}
@@ -32,7 +33,7 @@ export default function TaskList({ status = "", tasks, role, selectedUser }: Tas
                  transition-colors duration-200"
           >
             <Plus className="w-4 h-4" />
-            Add New Task
+            {t("Add New Task")}
           </button>
         )}
       </div>
@@ -46,12 +47,12 @@ export default function TaskList({ status = "", tasks, role, selectedUser }: Tas
             className="min-h-[200px] flex flex-col gap-3"
           >
             {tasks.length === 0 ? (
-              <div className="flex flex-col items-center justify-center 
+              <div
+                className="flex flex-col items-center justify-center 
                               bg-gray-50 border border-dashed border-gray-300 
-                              rounded-lg h-32 text-gray-400 gap-2">
-                {/* Placeholder */}
-                <span className="text-sm">No tasks here</span>
-
+                              rounded-lg h-32 text-gray-400 gap-2"
+              >
+                <span className="text-sm">{t("No tasks here")}</span>
               </div>
             ) : (
               tasks.map((task, index) => (
@@ -66,7 +67,11 @@ export default function TaskList({ status = "", tasks, role, selectedUser }: Tas
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
                     >
-                      <TaskCard task={task} imageUrl={task.imageUrl} selectedUser={selectedUser} />
+                      <TaskCard
+                        task={task}
+                        imageUrl={task.imageUrl}
+                        selectedUser={selectedUser}
+                      />
                     </div>
                   )}
                 </Draggable>

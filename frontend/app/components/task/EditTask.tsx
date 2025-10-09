@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Task, Priority, Status } from "@/app/mock/tasks"; 
+import { Task, Priority, Status } from "@/app/mock/tasks";
 import { updateTask, uploadFile } from "@/app/services/taskApi";
+import { useTranslation } from "react-i18next";
 
 interface EditTaskProps {
   task: Task;
@@ -13,89 +14,90 @@ interface EditTaskProps {
 export default function EditTask({ task, onClose, onUpdated }: EditTaskProps) {
   const [title, setTitle] = useState(task.name);
   const [createdDate, setCreatedDate] = useState(
-  task.createdDate ? task.createdDate.split("T")[0] : ""
-);
+    task.createdDate ? task.createdDate.split("T")[0] : ""
+  );
   const [priority, setPriority] = useState<Priority>(task.priority);
   const [description, setDescription] = useState(task.description);
   const [loading, setLoading] = useState(false);
   const [image, setImage] = useState<File | null>(null);
   const [status, setStatus] = useState<Status>(task.status);
+  const { t } = useTranslation();
 
   const handleSubmit = async (e: React.FormEvent) => {
-e.preventDefault();
-  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
-  setLoading(true);
+    e.preventDefault();
+    const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+    setLoading(true);
 
-  try {
-    let imageUrl = task.imageUrl;
+    try {
+      let imageUrl = task.imageUrl;
+      if (image) {
+        imageUrl = await uploadFile(image);
+      }
 
-    if (image) {
-      imageUrl = await uploadFile(image);
+      const updatedTask = {
+        name: title,
+        createdDate,
+        priority,
+        description,
+        username: currentUser.username,
+        status,
+        imageUrl,
+      };
+
+      await updateTask(task.id, updatedTask);
+      onClose();
+      onUpdated();
+    } catch (err) {
+      console.error(err);
+      alert(t("Failed to update task"));
+    } finally {
+      setLoading(false);
     }
+  };
 
-    const updatedTask = {
-      name: title,
-      createdDate,
-      priority,
-      description,
-      username: currentUser.username,
-      status,      
-      imageUrl,
-    };
-
-    await updateTask(task.id, updatedTask);
-    onClose();
-    onUpdated();
-  } catch (err) {
-    console.error(err);
-    alert("Failed to update task");
-  } finally {
-    setLoading(false);
-  }
-};
   return (
     <div className="bg-[#F9F9F9] w-[918px] h-[708px] rounded-md border border-gray-300 shadow-2xl p-8">
       <form onSubmit={handleSubmit} className="h-full flex flex-col space-y-6">
-
-        <div className="flex justify-between items-center  pb-2">
-          <h2 className="text-xl font-bold text-gray-800">Edit Task</h2>
+        <div className="flex justify-between items-center pb-2">
+          <h2 className="text-xl font-bold text-gray-800">{t("Edit Task")}</h2>
           <button
             type="button"
             onClick={onClose}
-            className="text-sm text-gray-600 hover:underline">
-            Go Back
+            className="text-sm text-gray-600 hover:underline"
+          >
+            {t("Go Back")}
           </button>
         </div>
-
 
         <div className="bg-[#FFFFFF] w-[794px] h-[476px] rounded-lg border border-gray-200 shadow p-8 space-y-6">
           <div>
             <label className="block text-sm font-bold text-gray-600 mb-1">
-              Title
+              {t("Title")}
             </label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-orange-400" />
+              className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
+            />
           </div>
-
 
           <div>
             <label className="block text-sm font-bold text-gray-600 mb-1">
-              Date
+              {t("Date")}
             </label>
             <input
               type="date"
               value={createdDate}
               onChange={(e) => setCreatedDate(e.target.value)}
-              className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-orange-400" />
+              className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
+            />
           </div>
 
           <div className="flex gap-25">
             <div>
               <label className="block text-sm font-bold text-gray-600 mb-2">
-                Priority
+                {t("Priority")}
               </label>
               <div className="flex gap-6">
                 <label className="flex items-center gap-2">
@@ -106,7 +108,7 @@ e.preventDefault();
                     checked={priority === "Extremely"}
                     onChange={() => setPriority("Extremely")}
                   />
-                  <span className="text-red-600">Extreme</span>
+                  <span className="text-red-600">{t("Extreme")}</span>
                 </label>
                 <label className="flex items-center gap-2">
                   <input
@@ -116,7 +118,7 @@ e.preventDefault();
                     checked={priority === "Moderate"}
                     onChange={() => setPriority("Moderate")}
                   />
-                  <span className="text-blue-600">Moderate</span>
+                  <span className="text-blue-600">{t("Moderate")}</span>
                 </label>
                 <label className="flex items-center gap-2">
                   <input
@@ -126,14 +128,14 @@ e.preventDefault();
                     checked={priority === "Low"}
                     onChange={() => setPriority("Low")}
                   />
-                  <span className="text-green-600">Low</span>
+                  <span className="text-green-600">{t("Low")}</span>
                 </label>
               </div>
             </div>
 
             <div>
               <label className="block text-sm font-bold text-gray-600 mb-2">
-                Status
+                {t("Status")}
               </label>
               <div className="flex gap-6">
                 <label className="flex items-center gap-2">
@@ -144,7 +146,7 @@ e.preventDefault();
                     checked={status === "PENDING"}
                     onChange={() => setStatus("PENDING")}
                   />
-                  <span className="text-red-600">Pending</span>
+                  <span className="text-red-600">{t("Pending")}</span>
                 </label>
                 <label className="flex items-center gap-2">
                   <input
@@ -154,7 +156,7 @@ e.preventDefault();
                     checked={status === "IN_PROGRESS"}
                     onChange={() => setStatus("IN_PROGRESS")}
                   />
-                  <span className="text-blue-600">In Progress</span>
+                  <span className="text-blue-600">{t("In Progress")}</span>
                 </label>
                 <label className="flex items-center gap-2">
                   <input
@@ -164,36 +166,35 @@ e.preventDefault();
                     checked={status === "COMPLETED"}
                     onChange={() => setStatus("COMPLETED")}
                   />
-                  <span className="text-green-600">Completed</span>
+                  <span className="text-green-600">{t("Completed")}</span>
                 </label>
               </div>
             </div>
           </div>
 
-
           <div className="grid sm:grid-cols-2 gap-6 flex-1">
             <div>
               <label className="block text-sm font-bold text-gray-600 mb-1">
-                Task Description
+                {t("Task Description")}
               </label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Start writing here..."
+                placeholder={t("Start writing here...")}
                 className="w-full border border-gray-300 rounded-md p-2 h-32 focus:outline-none focus:ring-2 focus:ring-orange-400"
               />
             </div>
             <div>
               <label className="block text-sm font-bold text-gray-600 mb-1">
-                Upload Image
+                {t("Upload Image")}
               </label>
               <div className="flex flex-col items-center justify-center border-2 border-dashed rounded-md p-6 text-gray-400">
                 {image ? (
                   <p>{image.name}</p>
                 ) : (
                   <>
-                    <p>Drag & Drop files here</p>
-                    <span className="my-2">or</span>
+                    <p>{t("Drag & Drop files here")}</p>
+                    <span className="my-2">{t("or")}</span>
                     <input
                       type="file"
                       onChange={(e) =>
@@ -206,7 +207,7 @@ e.preventDefault();
                       htmlFor="fileUpload"
                       className="cursor-pointer bg-gray-200 px-3 py-1 rounded hover:bg-gray-300"
                     >
-                      Browse
+                      {t("Browse")}
                     </label>
                   </>
                 )}
@@ -218,9 +219,10 @@ e.preventDefault();
         <div className="flex justify-start pt-4">
           <button
             type="submit"
-            className="bg-orange-500 text-white px-6 py-2 rounded hover:bg-orange-600" disabled={loading}
+            className="bg-orange-500 text-white px-6 py-2 rounded hover:bg-orange-600"
+            disabled={loading}
           >
-            {loading ? "Uploading..." : "Save"}
+            {loading ? t("Uploading...") : t("Save")}
           </button>
         </div>
       </form>

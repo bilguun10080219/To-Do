@@ -6,6 +6,7 @@ import FormItem from "../form/FormItem";
 import Input from "./Input";
 import Button from "./Button";
 import { Search as SearchIcon } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface SearchProps {
   onSearch?: (query: string) => void;
@@ -13,6 +14,7 @@ interface SearchProps {
 
 export default function Search({ onSearch }: SearchProps) {
   const [query, setQuery] = useState("");
+  const { t } = useTranslation();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,7 +29,7 @@ export default function Search({ onSearch }: SearchProps) {
     >
       <FormItem className="flex-1 m-0">
         <Input
-          placeholder="Search your task here..."
+          placeholder={t("Search your task here...")}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           className="h-10 w-full"

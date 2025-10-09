@@ -7,6 +7,7 @@ import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 import { Task } from "@/app/mock/tasks";
 import { getTasks, updateTask } from "@/app/services/taskApi";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 
 export default function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -15,7 +16,7 @@ export default function TasksPage() {
   const [role, setRole] = useState("user");
   const [selectedUser, setSelectedUser] = useState("");
   const [users, setUsers] = useState([]);
-
+  const { t } = useTranslation();
 
   useEffect(() => {
     const user = localStorage.getItem("user");
@@ -41,11 +42,9 @@ export default function TasksPage() {
     if (role === "admin") fetchUsers();
   }, [role]);
 
-
   const fetchTasks = async () => {
     try {
       let data;
-
       if (role === "admin") {
         if (selectedUser) {
           data = await getTasks(selectedUser, searchQuery);
@@ -63,11 +62,9 @@ export default function TasksPage() {
     }
   };
 
-
   useEffect(() => {
     fetchTasks();
   }, [searchQuery, selectedUser]);
-
 
   const handleDragEnd = async (result: DropResult) => {
     if (!result.destination) return;
@@ -104,13 +101,13 @@ export default function TasksPage() {
     <Layout onSearch={setSearchQuery}>
       {role === "admin" && (
         <div className="flex justify-between items-center gap-4 mb-4 bg-white p-4 rounded-xl shadow-sm">
-          <h2 className="text-lg font-semibold text-gray-700">Admin Panel</h2>
+          <h2 className="text-lg font-semibold text-gray-700">{t("Admin Panel")}</h2>
           <select
             value={selectedUser}
             onChange={(e) => setSelectedUser(e.target.value)}
             className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-700"
           >
-            <option value="">Select a user</option>
+            <option value="">{t("Select a user")}</option>
             {users.map((u) => (
               <option key={u.username} value={u.username}>
                 {u.username}
@@ -119,6 +116,7 @@ export default function TasksPage() {
           </select>
         </div>
       )}
+
       <DragDropContext onDragEnd={handleDragEnd}>
         <div className="grid grid-cols-3 gap-4">
           <TaskList

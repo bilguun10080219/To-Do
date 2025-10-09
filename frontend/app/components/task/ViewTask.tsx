@@ -7,6 +7,7 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 import EditTask from "@/app/components/task/EditTask";
 import { Task } from "@/app/mock/tasks";
 import { deleteTask, getTaskById } from "@/app/services/taskApi";
+import { useTranslation } from "react-i18next";
 
 export default function ViewTask() {
   const { id } = useParams<{ id: string }>();
@@ -14,42 +15,43 @@ export default function ViewTask() {
   const [task, setTask] = useState<Task | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
-
+  const { t } = useTranslation();
 
   const fetchTask = async () => {
-  try {
-            setLoading(true);
-            const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
-
-            if (!id || !currentUser.username) return;
-
-            const t = await getTaskById(Number(id), currentUser.role === "admin" ? "" : currentUser.username);
-            setTask(t);
-        } catch (err) {
-            console.error("Error fetching task:", err);
-            setTask(null);
-        } finally {
-            setLoading(false);
-        }
-    };
+    try {
+      setLoading(true);
+      const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+      if (!id || !currentUser.username) return;
+      const tData = await getTaskById(
+        Number(id),
+        currentUser.role === "admin" ? "" : currentUser.username
+      );
+      setTask(tData);
+    } catch (err) {
+      console.error("Error fetching task:", err);
+      setTask(null);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchTask();
   }, [id]);
 
-  if (loading) return <p className="text-gray-500">Loading...</p>;
-  if (!task) return <p className="text-red-500">Task not found</p>;
+  if (loading) return <p className="text-gray-500">{t("Loading...")}</p>;
+  if (!task) return <p className="text-red-500">{t("Task not found")}</p>;
 
   const handleDelete = async () => {
     if (!task.id) return;
-    if (confirm("Are you sure you want to delete this task?")) {
+    if (confirm(t("Are you sure you want to delete this task?"))) {
       try {
         const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
         await deleteTask(task.id, currentUser.username);
         router.push("/tasks");
       } catch (err) {
         console.error(err);
-        alert("Failed to delete task");
+        alert(t("Failed to delete task"));
       }
     }
   };
@@ -76,29 +78,51 @@ export default function ViewTask() {
   };
 
   return (
-    <div className="my-5 w-full rounded-2xl border shadow-2xl flex flex-col ">
+    <div className="my-5 w-full rounded-2xl border shadow-2xl flex flex-col">
       <div key={task.id} className="flex min-h-[calc(100vh-120px)] flex-col">
         <div className="m-3 flex justify-end">
-          <button onClick={() => router.push("/tasks")} className="cursor-pointer font-semibold">
-            Go Back
+          <button
+            onClick={() => router.push("/tasks")}
+            className="cursor-pointer font-semibold"
+          >
+            {t("Go Back")}
           </button>
         </div>
 
         <div className="p-5">
           <div className="flex flex-col items-center gap-5 sm:flex-row sm:items-start">
             {task.imageUrl && (
-              <Image src={task.imageUrl} alt={task.name} width={210} height={217} className="rounded-lg object-cover" />
+              <Image
+                src={task.imageUrl}
+                alt={task.name}
+                width={210}
+                height={217}
+                className="rounded-lg object-cover"
+              />
             )}
             <div className="flex flex-col gap-2 text-center text-lg sm:text-left">
-              <h1 className="text-xl font-semibold sm:text-2xl">{task.name}</h1>
+              <h1 className="text-xl font-semibold sm:text-2xl">
+                {task.name}
+              </h1>
               <p>
-                Priority: <span className={`${mapPriorityColor(task.priority)} font-semibold`}>{task.priority}</span>
+                {t("Priority")}:{" "}
+                <span
+                  className={`${mapPriorityColor(task.priority)} font-semibold`}
+                >
+                  {task.priority}
+                </span>
               </p>
               <p>
-                Status: <span className={`${mapStatusColor(task.status)} font-semibold`}>{task.status}</span>
+                {t("Status")}:{" "}
+                <span
+                  className={`${mapStatusColor(task.status)} font-semibold`}
+                >
+                  {task.status}
+                </span>
               </p>
               <p className="text-border">
-                Created on: {new Date(task.createdDate).toLocaleDateString()}
+                {t("Created on")}:{" "}
+                {new Date(task.createdDate).toLocaleDateString()}
               </p>
             </div>
           </div>
@@ -109,10 +133,16 @@ export default function ViewTask() {
         </div>
 
         <div className="mt-auto flex items-center justify-end gap-4 p-4">
-          <button onClick={handleDelete} className="rounded-lg bg-red-500 p-2 text-white hover:bg-red-600">
+          <button
+            onClick={handleDelete}
+            className="rounded-lg bg-red-500 p-2 text-white hover:bg-red-600"
+          >
             <FaTrash />
           </button>
-          <button onClick={() => setIsEditing(true)} className="rounded-lg bg-blue-500 p-2 text-white hover:bg-blue-600">
+          <button
+            onClick={() => setIsEditing(true)}
+            className="rounded-lg bg-blue-500 p-2 text-white hover:bg-blue-600"
+          >
             <FaEdit />
           </button>
         </div>
@@ -120,7 +150,11 @@ export default function ViewTask() {
 
       {isEditing && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <EditTask task={task} onClose={() => setIsEditing(false)} onUpdated={fetchTask} />
+          <EditTask
+            task={task}
+            onClose={() => setIsEditing(false)}
+            onUpdated={fetchTask}
+          />
         </div>
       )}
     </div>
