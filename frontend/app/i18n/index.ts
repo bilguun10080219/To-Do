@@ -93,7 +93,7 @@ i18n.use(initReactI18next).init({
                 "Create Categories": "Create Categories",
                 "Category Name": "Category Name",
                 "Enter category name": "Enter category name",
-                "Create" : "Create",
+                "Create": "Create",
 
                 // ===== Buttons =====
                 "Add": "Add",
@@ -122,6 +122,35 @@ i18n.use(initReactI18next).init({
                 // ===== Example Task Statuses =====
                 "Not Started": "Not Started",
                 "Extreme": "Extreme",
+
+                // Login Page
+                "Sign in": "Sign in",
+                "Password": "Password",
+                "Enter username": "Enter username",
+                "Enter password": "Enter password",
+                "Login": "Login",
+                "Logging in...": "Logging in...",
+                "Register": "Register",
+                "Quick Admin": "Quick Admin",
+                "Invalid credentials": "Invalid credentials",
+                "Error connecting to server": "Error connecting to server",
+
+                // Register Page
+                "Sign Up": "Sign Up",
+                "Enter your username": "Enter your username",
+                "Enter your email": "Enter your email",
+                "Enter your password": "Enter your password",
+                "Confirm your password": "Confirm your password",
+                "I agree to the terms and conditions": "I agree to the terms and conditions",
+                "You must agree to the terms and conditions.": "You must agree to the terms and conditions.",
+                "All fields are required.": "All fields are required.",
+                "Passwords do not match.": "Passwords do not match.",
+                "Registration successful! You can now log in.": "Registration successful! You can now log in.",
+                "Registration failed": "Registration failed",
+                "Error connecting to the server.": "Error connecting to the server.",
+                "Registering...": "Registering...",
+                "Already have an account?": "Already have an account?",
+                "Sign In": "Sign In",
             },
         },
 
@@ -211,7 +240,7 @@ i18n.use(initReactI18next).init({
                 "Create Categories": "カテゴリーを作成",
                 "Category Name": "カテゴリー名",
                 "Enter category name": "カテゴリー名を入力",
-                "Create" : "作成する",
+                "Create": "作成する",
 
                 // ===== Buttons =====
                 "Add": "追加",
@@ -240,6 +269,35 @@ i18n.use(initReactI18next).init({
                 // ===== Example Task Statuses =====
                 "Not Started": "未開始",
                 "Extreme": "非常に高い",
+
+                // Login Page
+                "Sign in": "サインイン",
+                "Password": "パスワード",
+                "Enter username": "ユーザー名を入力",
+                "Enter password": "パスワードを入力",
+                "Login": "ログイン",
+                "Logging in...": "ログイン中...",
+                "Register": "登録",
+                "Quick Admin": "クイック管理者",
+                "Invalid credentials": "無効な認証情報です",
+                "Error connecting to server": "サーバー接続エラー",
+
+                // Register Page
+                "Sign Up": "サインアップ",
+                "Enter your username": "ユーザー名を入力してください",
+                "Enter your email": "メールアドレスを入力してください",
+                "Enter your password": "パスワードを入力してください",
+                "Confirm your password": "パスワードを確認してください",
+                "I agree to the terms and conditions": "利用規約に同意します",
+                "You must agree to the terms and conditions.": "利用規約に同意する必要があります。",
+                "All fields are required.": "すべての項目を入力してください。",
+                "Passwords do not match.": "パスワードが一致しません。",
+                "Registration successful! You can now log in.": "登録が完了しました！ログインできます。",
+                "Registration failed": "登録に失敗しました",
+                "Error connecting to the server.": "サーバー接続エラーです。",
+                "Registering...": "登録中...",
+                "Already have an account?": "すでにアカウントをお持ちですか？",
+                "Sign In": "サインイン",
             },
         },
     },

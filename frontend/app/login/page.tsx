@@ -7,6 +7,8 @@ import Button from "../components/core/Button";
 import Input from "../components/core/Input";
 import FormItem from "../components/form/FormItem";
 import { User, Lock } from "lucide-react";
+import { useTranslation } from "react-i18next"; 
+import "@/app/i18n"; 
 
 const USE_FAKE_LOGIN = false;
 
@@ -15,6 +17,7 @@ export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const { t } = useTranslation(); 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,7 +25,6 @@ export default function LoginPage() {
 
     try {
       if (USE_FAKE_LOGIN) {
-        // --- FAKE LOGIN (for testing without backend) ---
         const user =
           username === "admin@example.com" || username === "admin"
             ? { username, role: "admin", name: "Admin" }
@@ -31,7 +33,6 @@ export default function LoginPage() {
         localStorage.setItem("user", JSON.stringify(user));
         router.push("/");
       } else {
-        // --- REAL LOGIN (talks to Spring Boot backend) ---
         const res = await fetch("http://localhost:8080/api/auth/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -44,12 +45,12 @@ export default function LoginPage() {
           router.push("/");
         } else {
           const msg = await res.text();
-          alert(msg || "Invalid credentials");
+          alert(msg || t("Invalid credentials"));
         }
       }
     } catch (err) {
       console.error(err);
-      alert("Error connecting to server");
+      alert(t("Error connecting to server"));
     } finally {
       setLoading(false);
     }
@@ -64,30 +65,32 @@ export default function LoginPage() {
         <div className="flex flex-row gap-4 justify-between">
           {/* --- Left Side (Form) --- */}
           <div className="flex w-full flex-col gap-5 items-start">
-            <h1 className="text-2xl font-semibold mb-6 text-center">Sign in</h1>
+            <h1 className="text-2xl font-semibold mb-6 text-center">
+              {t("Sign in")}
+            </h1>
 
-            <FormItem label="Username">
+            <FormItem label={t("Username")}>
               <div className="relative w-full">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 text-black w-5 h-5" />
                 <Input
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  placeholder="Enter username"
+                  placeholder={t("Enter username")}
                   className="pl-10"
                   required
                 />
               </div>
             </FormItem>
 
-            <FormItem label="Password">
+            <FormItem label={t("Password")}>
               <div className="relative w-full">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-black w-5 h-5" />
                 <Input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter password"
+                  placeholder={t("Enter password")}
                   className="pl-10"
                   required
                 />
@@ -95,7 +98,7 @@ export default function LoginPage() {
             </FormItem>
 
             <Button type="submit" className="mt-4" disabled={loading}>
-              {loading ? "Logging in..." : "Login"}
+              {loading ? t("Logging in...") : t("Login")}
             </Button>
 
             <Button
@@ -104,7 +107,7 @@ export default function LoginPage() {
               className="mt-2"
               onClick={() => router.push("/register")}
             >
-              Register
+              {t("Register")}
             </Button>
 
             {/* Demo login shortcuts */}
@@ -123,7 +126,7 @@ export default function LoginPage() {
                 }}
                 className="px-3 py-1.5 rounded-lg bg-orange-500 text-white hover:bg-orange-600 transition"
               >
-                Quick Admin
+                {t("Quick Admin")}
               </button>
             </div>
           </div>

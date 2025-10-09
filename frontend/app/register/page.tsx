@@ -7,9 +7,12 @@ import FormItem from "../components/form/FormItem";
 import Input from "../components/core/Input";
 import Button from "../components/core/Button";
 import { User, Mail, Lock, ShieldCheck } from "lucide-react";
+import { useTranslation } from "react-i18next"; 
+import "@/app/i18n"; 
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { t } = useTranslation(); 
 
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -21,17 +24,16 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // --- Validation ---
     if (!agreeTerms) {
-      alert("You must agree to the terms and conditions.");
+      alert(t("You must agree to the terms and conditions."));
       return;
     }
     if (!username || !email || !password) {
-      alert("All fields are required.");
+      alert(t("All fields are required."));
       return;
     }
     if (password !== confirmPassword) {
-      alert("Passwords do not match.");
+      alert(t("Passwords do not match."));
       return;
     }
 
@@ -45,15 +47,15 @@ export default function RegisterPage() {
       });
 
       if (res.ok) {
-        alert("Registration successful! You can now log in.");
+        alert(t("Registration successful! You can now log in."));
         router.push("/login");
       } else {
         const msg = await res.text();
-        alert(msg || "Registration failed");
+        alert(msg || t("Registration failed"));
       }
     } catch (err) {
       console.error("Error:", err);
-      alert("Error connecting to the server.");
+      alert(t("Error connecting to the server."));
     } finally {
       setLoading(false);
     }
@@ -76,18 +78,18 @@ export default function RegisterPage() {
           {/* --- Right: Form --- */}
           <div className="flex flex-col w-full items-start gap-4">
             <h1 className="text-2xl font-semibold mb-4 text-center w-full">
-              Sign Up
+              {t("Sign Up")}
             </h1>
 
             {/* Username */}
-            <FormItem label="Username">
+            <FormItem label={t("Username")}>
               <div className="relative w-full">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 text-black w-5 h-5" />
                 <Input
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  placeholder="Enter your username"
+                  placeholder={t("Enter your username")}
                   className="pl-10"
                   required
                 />
@@ -95,14 +97,14 @@ export default function RegisterPage() {
             </FormItem>
 
             {/* Email */}
-            <FormItem label="Email">
+            <FormItem label={t("Email")}>
               <div className="relative w-full">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-black w-5 h-5" />
                 <Input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
+                  placeholder={t("Enter your email")}
                   className="pl-10"
                   required
                 />
@@ -110,14 +112,14 @@ export default function RegisterPage() {
             </FormItem>
 
             {/* Password */}
-            <FormItem label="Password">
+            <FormItem label={t("Password")}>
               <div className="relative w-full">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-black w-5 h-5" />
                 <Input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
+                  placeholder={t("Enter your password")}
                   className="pl-10"
                   required
                 />
@@ -125,14 +127,14 @@ export default function RegisterPage() {
             </FormItem>
 
             {/* Confirm Password */}
-            <FormItem label="Confirm Password">
+            <FormItem label={t("Confirm Password")}>
               <div className="relative w-full">
                 <ShieldCheck className="absolute left-3 top-1/2 -translate-y-1/2 text-black w-5 h-5" />
                 <Input
                   type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Confirm your password"
+                  placeholder={t("Confirm your password")}
                   className="pl-10"
                   required
                 />
@@ -148,23 +150,23 @@ export default function RegisterPage() {
                   onChange={(e) => setAgreeTerms(e.target.checked)}
                   className="w-4 h-4"
                 />
-                I agree to the terms and conditions
+                {t("I agree to the terms and conditions")}
               </label>
             </FormItem>
 
             {/* Submit */}
             <Button type="submit" className="mt-4" disabled={loading}>
-              {loading ? "Registering..." : "Register"}
+              {loading ? t("Registering...") : t("Register")}
             </Button>
 
             {/* Link to Login */}
             <p className="text-center mt-4 text-sm text-gray-500 w-full">
-              Already have an account?{" "}
+              {t("Already have an account?")}{" "}
               <span
                 className="text-blue-600 cursor-pointer hover:underline"
                 onClick={() => router.push("/login")}
               >
-                Sign In
+                {t("Sign In")}
               </span>
             </p>
           </div>
