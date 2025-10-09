@@ -1,6 +1,7 @@
 package com.todo.backend.controller;
 
 import com.todo.backend.dto.LoginRequest;
+import com.todo.backend.dto.LoginResponse;
 import com.todo.backend.dto.RegisterRequest;
 import com.todo.backend.entity.User;
 import com.todo.backend.service.UserService;
@@ -52,8 +53,27 @@ public class AuthController {
         if(!request.getPassword().equals(user.getPassword())){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
         }
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(new LoginResponse(
+            user.getId(),
+            user.getUsername(),
+            user.getEmail(),
+            user.getRole()
+            ));
     }
+
+    public static class LoginResponse {
+    public Long id;
+    public String username;
+    public String email;
+    public String role;
+
+    public LoginResponse(Long id, String username, String email, String role) {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.role = role;
+    }
+}
 
 
     @PostMapping("/logout")

@@ -8,7 +8,7 @@ import Input from "../components/core/Input";
 import FormItem from "../components/form/FormItem";
 import { User, Lock } from "lucide-react";
 
-const USE_FAKE_LOGIN = true;
+const USE_FAKE_LOGIN = false;
 
 export default function LoginPage() {
   const router = useRouter();
