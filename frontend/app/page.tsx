@@ -9,6 +9,10 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next"; 
 
+interface User {
+  username: string;
+}
+
 export default function Page() {
   const [role, setRole] = useState<string>("user");
   const [selectedUser, setSelectedUser] = useState<string>("");
@@ -27,7 +31,7 @@ export default function Page() {
     setRole(currentUser.role || "user");
   }, []);
 
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<User[]>([]);
 
   useEffect(() => {
     const fetchUsers = async () => {

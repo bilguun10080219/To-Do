@@ -8,6 +8,9 @@ import { Task } from "@/app/mock/tasks";
 import { getTasks, updateTask } from "@/app/services/taskApi";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
+interface User {
+  username: string;
+}
 
 export default function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -15,8 +18,8 @@ export default function TasksPage() {
   const router = useRouter();
   const [role, setRole] = useState("user");
   const [selectedUser, setSelectedUser] = useState("");
-  const [users, setUsers] = useState([]);
   const { t } = useTranslation();
+  const [users, setUsers] = useState<User[]>([]);
 
   useEffect(() => {
     const user = localStorage.getItem("user");
