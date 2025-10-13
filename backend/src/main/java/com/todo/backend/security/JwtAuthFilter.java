@@ -11,11 +11,19 @@ import java.io.IOException;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI(); // use getRequestURI for full path
+        // Skip login, register, and tasks
+        return path.startsWith("/api/auth") || path.startsWith("/api/tasks") || path.startsWith("/api/users");
+    }
+
+    @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
+        // This code only runs for endpoints NOT skipped
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {

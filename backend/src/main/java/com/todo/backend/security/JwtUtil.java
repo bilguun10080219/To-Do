@@ -3,11 +3,15 @@ package com.todo.backend.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 
+import javax.crypto.SecretKey;
 import java.util.Date;
 
 public class JwtUtil {
-    private static final String SECRET_KEY = "my-secret-key"; // replace with strong secret
+    // Make sure the key is at least 256 bits (32 bytes)
+    private static final String SECRET_KEY_STRING = "my-very-strong-secret-key-1234567890!";
+    private static final SecretKey SECRET_KEY = Keys.hmacShaKeyFor(SECRET_KEY_STRING.getBytes());
     private static final long EXPIRATION_MS = 86400000; // 1 day
 
     public static String generateToken(String username, String role) {
@@ -16,14 +20,15 @@ public class JwtUtil {
                 .claim("role", role)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_MS))
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
                 .compact();
     }
 
     public static boolean validateToken(String token) {
         try {
-            Jwts.parser()
+            Jwts.parserBuilder()
                 .setSigningKey(SECRET_KEY)
+                .build()
                 .parseClaimsJws(token);
             return true;
         } catch (Exception e) {
@@ -32,8 +37,9 @@ public class JwtUtil {
     }
 
     public static Claims getClaims(String token) {
-        return Jwts.parser()
+        return Jwts.parserBuilder()
                 .setSigningKey(SECRET_KEY)
+                .build()
                 .parseClaimsJws(token)
                 .getBody();
     }

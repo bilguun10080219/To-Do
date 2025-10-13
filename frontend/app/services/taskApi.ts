@@ -1,18 +1,19 @@
 import axios from "axios";
 
-// Create an Axios instance with the token from localStorage
-const getToken = () => localStorage.getItem("token");
+// Base URL for tasks API
+const BASE_URL = "http://localhost:8080/api/tasks";
 
+// Axios instance
 const api = axios.create({
-  baseURL: "http://localhost:8080/api/tasks",
+  baseURL: BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-// Add a request interceptor to attach the token dynamically
+// Request interceptor to attach JWT token dynamically
 api.interceptors.request.use((config) => {
-  const token = getToken();
+  const token = localStorage.getItem("token");
   if (token) {
     config.headers = {
       ...config.headers,
@@ -23,6 +24,7 @@ api.interceptors.request.use((config) => {
 });
 
 // --- API functions ---
+
 export const getTasks = (username?: string, search?: string) => {
   const params: Record<string, string> = {};
   if (username) params.username = username;
@@ -49,16 +51,14 @@ export const deleteTask = (id: number, username?: string) => {
   return api.delete(`/${id}`, { params }).then((res) => res.data);
 };
 
+// File upload with token automatically included
 export const uploadFile = async (file: File): Promise<string> => {
   const formData = new FormData();
   formData.append("file", file);
 
-  const res = await fetch("http://localhost:8080/api/files/upload", {
-    method: "POST",
-    body: formData,
+  const res = await api.post("/upload", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
   });
 
-  if (!res.ok) throw new Error("Upload failed");
-  const data = await res.json();
-  return data.url;
+  return res.data.url;
 };
