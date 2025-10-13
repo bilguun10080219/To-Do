@@ -3,6 +3,7 @@ package com.todo.backend.dto;
 import com.todo.backend.entity.Priority;
 import com.todo.backend.entity.Status;
 import lombok.Data;
+
 import java.time.LocalDateTime;
 
 @Data
@@ -15,4 +16,5 @@ public class TaskResponse {
     private LocalDateTime createdDate;
     private LocalDateTime completedDate;
     private String imageUrl;
+    private String assignedUserId;
 }

@@ -14,5 +14,4 @@ public interface TaskService {
     TaskResponse getTaskById(Long id, User user);
     List<TaskResponse> searchTasks(User user, String search);
     List<TaskResponse> getAllTasks();
-
 }

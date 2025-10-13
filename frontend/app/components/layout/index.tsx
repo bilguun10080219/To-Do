@@ -8,7 +8,6 @@ import { usePathname } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import "@/app/i18n";
 
-
 interface LayoutProps {
   children: ReactNode;
   className?: string;
@@ -29,30 +28,18 @@ export default function Layout({ children, className, onSearch }: LayoutProps) {
   }, []);
 
   return (
-    <div
-      className={cn(
-        "flex flex-col min-w-screen min-h-screen gap-[57px] bg-gray-100",
-        className
-      )}
-    >
+    <div className="flex flex-col min-h-screen bg-gray-100">
       <Header onSearch={onSearch} />
-
-      <div className="flex-1 flex flex-row">
-        <div className="flex flex-row w-full">
-          <Sidebar />
-          <div className="mx-[76px] flex flex-row flex-1 gap-[34px]">
-            <main className="flex flex-col w-full items-start gap-3 p-4">
-              {/* ✅ Зөвхөн Dashboard дээр welcome текст */}
-              {pathname === "/" && username && (
-                <span className="font-medium text-4xl text-black">
-                  {t("Welcome back")}, {username}
-                </span>
-              )}
-
-              {children}
-            </main>
-          </div>
-        </div>
+      <div className="flex-1 h-screen flex flex-col md:flex-row overflow-hidden">
+        <Sidebar />
+        <main className="flex-1 overflow-auto p-4 md:p-8">
+          {pathname === "/" && username && (
+            <span className="font-medium text-4xl text-black mb-6 block">
+              {t("Welcome back")}, {username}
+            </span>
+          )}
+          {children}
+        </main>
       </div>
     </div>
   );
