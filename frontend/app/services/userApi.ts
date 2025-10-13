@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:8080/api/users";
+const BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/users`;
 
 export const updateUser = (username: string, newUsername: string, newEmail: string) =>
   axios.put(`${BASE_URL}/update`, { username, newUsername, newEmail });
