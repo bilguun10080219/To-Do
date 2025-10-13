@@ -22,6 +22,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
   const [users, setUsers] = useState<string[]>([]);
   const [assignedUser, setAssignedUser] = useState("");
   const { t } = useTranslation();
+  const API_URL = process.env.NEXT_PUBLIC_API_URL
 
   useEffect(() => {
     const userStr = localStorage.getItem("user");
@@ -30,7 +31,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
       setRole(user.role || "USER");
 
       if ((user.role || "").toUpperCase() === "ADMIN") {
-        fetch("http://localhost:8080/api/users")
+        fetch(`${API_URL}/api/users`)
           .then((res) => {
             if (!res.ok) throw new Error(`Failed: ${res.status}`);
             return res.json();

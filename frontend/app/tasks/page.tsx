@@ -20,6 +20,7 @@ export default function TasksPage() {
   const [selectedUser, setSelectedUser] = useState("");
   const { t } = useTranslation();
   const [users, setUsers] = useState<User[]>([]);
+  const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 
   useEffect(() => {
@@ -35,7 +36,7 @@ export default function TasksPage() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await fetch("http://localhost:8080/api/users");
+        const res = await fetch(`${API_URL}/api/users`);
         const data = await res.json();
         setUsers(data);
       } catch (err) {

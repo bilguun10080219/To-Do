@@ -18,6 +18,7 @@ export default function Page() {
   const [selectedUser, setSelectedUser] = useState<string>("");
   const router = useRouter();
   const { t } = useTranslation(); 
+  const API_URL = process.env.NEXT_PUBLIC_API_URL
 
   useEffect(() => {
     const user = localStorage.getItem("user");
@@ -36,7 +37,7 @@ export default function Page() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await axios.get("http://localhost:8080/api/users");
+        const res = await axios.get(`${API_URL}/api/users`);
         setUsers(res.data);
       } catch (err) {
         console.error("Failed to fetch users", err);
