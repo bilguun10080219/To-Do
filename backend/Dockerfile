@@ -1,22 +1,17 @@
-# Use an official OpenJDK runtime as the base image
+# Use official OpenJDK runtime
 FROM openjdk:17-jdk-slim
 
 # Set working directory
 WORKDIR /app
 
-# Copy Maven wrapper and pom.xml first (for caching)
-COPY pom.xml .
-COPY mvnw .
-COPY .mvn .mvn
+# Copy the entire backend project into the image
+COPY . .
 
-# Copy source code
-COPY src src
+# Build the application using Maven (Render’s Java image already includes Maven)
+RUN apt-get update && apt-get install -y maven && mvn clean package -DskipTests
 
-# Build the application
-RUN ./mvnw clean package -DskipTests
-
-# Expose Render's dynamic port
+# Expose port
 EXPOSE 8080
 
-# Run the Spring Boot JAR file
+# Run the application
 CMD ["java", "-jar", "target/backend-0.0.1-SNAPSHOT.jar"]
