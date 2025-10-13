@@ -43,6 +43,7 @@ export default function LoginPage() {
         if (res.ok) {
           const user = await res.json();
           localStorage.setItem("user", JSON.stringify(user));
+          localStorage.setItem("token", user.token);
           router.push("/");
         } else {
           const msg = await res.text();

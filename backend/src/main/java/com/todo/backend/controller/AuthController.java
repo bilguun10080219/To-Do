@@ -5,6 +5,7 @@ import com.todo.backend.dto.LoginResponse;
 import com.todo.backend.dto.RegisterRequest;
 import com.todo.backend.entity.User;
 import com.todo.backend.service.UserService;
+import com.todo.backend.security.JwtUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -53,27 +54,17 @@ public class AuthController {
         if(!request.getPassword().equals(user.getPassword())){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
         }
+
+        String token = JwtUtil.generateToken(user.getUsername(), user.getRole());
+
         return ResponseEntity.ok(new LoginResponse(
             user.getId(),
             user.getUsername(),
             user.getEmail(),
-            user.getRole()
+            user.getRole(),
+            token
             ));
     }
-
-    public static class LoginResponse {
-    public Long id;
-    public String username;
-    public String email;
-    public String role;
-
-    public LoginResponse(Long id, String username, String email, String role) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.role = role;
-    }
-}
 
 
     @PostMapping("/logout")

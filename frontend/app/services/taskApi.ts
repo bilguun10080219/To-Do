@@ -1,50 +1,52 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:8080/api/tasks";
+// Create an Axios instance with the token from localStorage
+const getToken = () => localStorage.getItem("token");
 
+const api = axios.create({
+  baseURL: "http://localhost:8080/api/tasks",
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+// Add a request interceptor to attach the token dynamically
+api.interceptors.request.use((config) => {
+  const token = getToken();
+  if (token) {
+    config.headers = {
+      ...config.headers,
+      Authorization: `Bearer ${token}`,
+    };
+  }
+  return config;
+});
+
+// --- API functions ---
 export const getTasks = (username?: string, search?: string) => {
-  // Build params object
   const params: Record<string, string> = {};
-  if (username) params.username = username; // send username only if defined
-  if (search) params.search = search;       // send search if defined
+  if (username) params.username = username;
+  if (search) params.search = search;
 
-  return axios
-    .get(BASE_URL, { params })
-    .then((res) => res.data);
+  return api.get("", { params }).then((res) => res.data);
 };
 
 export const getTaskById = (id: number, username?: string) => {
   const params: Record<string, string> = {};
   if (username) params.username = username;
 
-  return axios
-    .get(`${BASE_URL}/${id}`, { params })
-    .then((res) => res.data);
+  return api.get(`/${id}`, { params }).then((res) => res.data);
 };
 
-export const createTask = (task: any) => {
-  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+export const createTask = (task: any) => api.post("", task).then((res) => res.data);
 
-  // fix username if stored as email
-  //const username = currentUser.username?.includes("@") ? currentUser.username.split("@")[0] : currentUser.username;
-
-  return axios.post(`${BASE_URL}`, task).then((res) => res.data);
-};
-
-export const updateTask = (id: number, task: any) => {
-  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
-  return axios
-    .put(`${BASE_URL}/${id}`, { ...task, username: currentUser.username })
-    .then((res) => res.data);
-};
+export const updateTask = (id: number, task: any) => api.put(`/${id}`, task).then((res) => res.data);
 
 export const deleteTask = (id: number, username?: string) => {
-  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
-  const params: Record<string, string> = {
-    username: username || currentUser.username,
-  };
+  const params: Record<string, string> = {};
+  if (username) params.username = username;
 
-  return axios.delete(`${BASE_URL}/${id}`, { params }).then((res) => res.data);
+  return api.delete(`/${id}`, { params }).then((res) => res.data);
 };
 
 export const uploadFile = async (file: File): Promise<string> => {
