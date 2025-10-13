@@ -72,68 +72,71 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public List<TaskResponse> getAllTasks() {
-        List<Task> tasks = taskRepository.findAll();
+        List<Task> tasks = taskRepository.findAllWithUser();
         return tasks.stream().map(this::toResponse).collect(Collectors.toList());
     }
 
 
     @Override
     public TaskResponse updateTask(Long id, TaskRequest request, User assignedUser) {
-    Task task;
-    if (assignedUser == null || "ADMIN".equalsIgnoreCase(assignedUser.getRole())) {
-        task = taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
-    } else {
-        task = taskRepository.findByIdAndUser(id, assignedUser)
-                .orElseThrow(() -> new RuntimeException("Task not found or not yours"));
+        Task task;
+        if (assignedUser == null || "ADMIN".equalsIgnoreCase(assignedUser.getRole())) {
+            task = taskRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Task not found"));
+        } else {
+            task = taskRepository.findByIdAndUser(id, assignedUser)
+                    .orElseThrow(() -> new RuntimeException("Task not found or not yours"));
+        }
+
+        task.setName(request.getName());
+        task.setDescription(request.getDescription());
+        task.setPriority(request.getPriority());
+        task.setStatus(request.getStatus());
+        task.setImageUrl(request.getImageUrl());
+
+        if (assignedUser != null && "ADMIN".equalsIgnoreCase(assignedUser.getRole())
+                && request.getAssignedUsername() != null) {
+            Optional<User> assignedOpt = userService.findByUsername(request.getAssignedUsername());
+            assignedOpt.ifPresent(task::setUser);
+        }
+
+        return toResponse(taskRepository.save(task));
     }
-
-    task.setName(request.getName());
-    task.setDescription(request.getDescription());
-    task.setPriority(request.getPriority());
-    task.setStatus(request.getStatus());
-    task.setImageUrl(request.getImageUrl());
-
-    if (assignedUser != null && "ADMIN".equalsIgnoreCase(assignedUser.getRole())
-        && request.getAssignedUsername() != null) {
-        Optional<User> assignedOpt = userService.findByUsername(request.getAssignedUsername());
-        assignedOpt.ifPresent(task::setUser);
-    }
-
-    return toResponse(taskRepository.save(task));
-}
 
     @Override
-public void deleteTask(Long id, User user) {
-    if (user == null) {
-        throw new RuntimeException("User not found");
+    public void deleteTask(Long id, User user) {
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+
+        boolean isAdmin = user.getRole() != null && user.getRole().toUpperCase().contains("ADMIN");
+
+        Task task;
+        if (isAdmin) {
+            task = taskRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Task not found"));
+        } else {
+            task = taskRepository.findByIdAndUser(id, user)
+                    .orElseThrow(() -> new RuntimeException("Task not found or not yours"));
+        }
+
+        taskRepository.delete(task);
     }
 
-    boolean isAdmin = user.getRole() != null && user.getRole().toUpperCase().contains("ADMIN");
+    private TaskResponse toResponse(Task task) {
+        if (task == null) return null;
 
-    Task task;
-    if (isAdmin) {
-        task = taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
-    } else {
-        task = taskRepository.findByIdAndUser(id, user)
-                .orElseThrow(() -> new RuntimeException("Task not found or not yours"));
+        TaskResponse response = new TaskResponse();
+        response.setId(task.getId());
+        response.setName(task.getName());
+        response.setDescription(task.getDescription());
+        response.setPriority(task.getPriority());
+        response.setStatus(task.getStatus());
+        response.setImageUrl(task.getImageUrl());
+        if (task.getUser() != null) {
+            response.setAssignedUsername(task.getUser().getUsername());
+        }
+        return response;
     }
-
-    taskRepository.delete(task);
-}
-
-private TaskResponse toResponse(Task task) {
-    if (task == null) return null;
-
-    TaskResponse response = new TaskResponse();
-    response.setId(task.getId());
-    response.setName(task.getName());
-    response.setDescription(task.getDescription());
-    response.setPriority(task.getPriority());
-    response.setStatus(task.getStatus());
-    response.setImageUrl(task.getImageUrl());
-    return response;
-}
 
 }
