@@ -72,7 +72,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public List<TaskResponse> getAllTasks() {
-        List<Task> tasks = taskRepository.findAll();
+        List<Task> tasks = taskRepository.findAllWithUser();
         return tasks.stream().map(this::toResponse).collect(Collectors.toList());
     }
 
@@ -121,19 +121,21 @@ public class TaskServiceImpl implements TaskService {
 
         taskRepository.delete(task);
     }
-private TaskResponse toResponse(Task task) {
-    if (task == null) return null;
 
-    TaskResponse response = new TaskResponse();
-    response.setId(task.getId());
-    response.setName(task.getName());
-    response.setDescription(task.getDescription());
-    response.setPriority(task.getPriority());
-    response.setStatus(task.getStatus());
-    response.setImageUrl(task.getImageUrl());
-    if (task.getUser() != null) {
-        response.setAssignedUserId(task.getUser().getId().toString()); // ID-г string болгоод дамжуулж байна
+    private TaskResponse toResponse(Task task) {
+        if (task == null) return null;
+
+        TaskResponse response = new TaskResponse();
+        response.setId(task.getId());
+        response.setName(task.getName());
+        response.setDescription(task.getDescription());
+        response.setPriority(task.getPriority());
+        response.setStatus(task.getStatus());
+        response.setImageUrl(task.getImageUrl());
+        if (task.getUser() != null) {
+            response.setAssignedUsername(task.getUser().getUsername());
+        }
+        return response;
     }
-    return response;
-}
+
 }

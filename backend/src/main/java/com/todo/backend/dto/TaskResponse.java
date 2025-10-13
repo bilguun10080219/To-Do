@@ -16,5 +16,5 @@ public class TaskResponse {
     private LocalDateTime createdDate;
     private LocalDateTime completedDate;
     private String imageUrl;
-    private String assignedUserId;
+    private String assignedUsername;
 }

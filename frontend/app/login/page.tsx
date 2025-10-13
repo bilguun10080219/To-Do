@@ -6,7 +6,7 @@ import Form from "../components/form/Form";
 import Button from "../components/core/Button";
 import Input from "../components/core/Input";
 import FormItem from "../components/form/FormItem";
-import { User, Lock } from "lucide-react";
+import { User, Lock, Globe } from "lucide-react";
 import { useTranslation } from "react-i18next"; 
 import "@/app/i18n"; 
 
@@ -17,7 +17,8 @@ export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const { t } = useTranslation(); 
+  const { t, i18n } = useTranslation(); 
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,9 +56,21 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+  const toggleLanguage = () => {
+    const newLang = i18n.language === "en" ? "jp" : "en";
+    i18n.changeLanguage(newLang);
+    localStorage.setItem("language", newLang);
+  };
 
   return (
     <div className="flex px-28 items-center justify-center min-h-screen bg-[#FF6767]">
+      <button
+        onClick={toggleLanguage}
+        className="absolute top-6 right-6 flex items-center gap-2 bg-white text-[#FF6767] px-3 py-1.5 rounded-lg font-semibold shadow hover:bg-gray-100 transition"
+      >
+        <Globe size={18} />
+        {i18n.language === "en" ? "JP" : "EN"}
+      </button>
       <Form
         onSubmit={handleSubmit}
         className="w-full bg-white p-6 rounded-2xl shadow-md"
@@ -109,26 +122,7 @@ export default function LoginPage() {
             >
               {t("Register")}
             </Button>
-
-            {/* Demo login shortcuts */}
-            <div className="flex gap-2 mt-3">
-              <button
-                type="button"
-                onClick={() => {
-                  localStorage.setItem(
-                    "user",
-                    JSON.stringify({
-                      username: "admin@example.com",
-                      role: "admin",
-                    })
-                  );
-                  router.push("/");
-                }}
-                className="px-3 py-1.5 rounded-lg bg-orange-500 text-white hover:bg-orange-600 transition"
-              >
-                {t("Quick Admin")}
-              </button>
-            </div>
+            
           </div>
 
           <img

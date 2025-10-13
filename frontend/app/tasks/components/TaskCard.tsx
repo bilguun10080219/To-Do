@@ -65,7 +65,7 @@ export default function TaskCard({
             <div className="text-sm text-gray-500">
               {t("Assigned to")}:{" "}
               <span className="font-medium text-gray-700">
-                {task.username || selectedUser || ""}
+                {task.assignedUsername}
               </span>
             </div>
           )}
