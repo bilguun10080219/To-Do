@@ -16,7 +16,11 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {
+    "http://localhost:3000",
+    "https://to-do-frontend.vercel.app"
+})
+
 public class AuthController {
 
     private final UserService userService;
@@ -41,7 +45,7 @@ public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
     user.setUsername(request.getUsername());
     user.setEmail(request.getEmail());
     user.setRole(request.getRole() == null ? "USER" : request.getRole());
-    user.setPassword(request.getPassword()); // <-- plain text
+    user.setPassword(passwordEncoder.encode(request.getPassword()));
 
     User saved = userService.save(user);
     return ResponseEntity.ok(saved);
@@ -55,9 +59,10 @@ public ResponseEntity<?> login(@RequestBody LoginRequest request){
     if(opt.isEmpty()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
 
     User user = opt.get();
-    if(!request.getPassword().equals(user.getPassword())){
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+    if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
     }
+
 
     // Generate JWT
     String token = JwtUtil.generateToken(user.getUsername(), user.getRole());

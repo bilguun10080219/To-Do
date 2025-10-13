@@ -16,7 +16,10 @@ import com.todo.backend.service.CloudinaryService;
 
 @RestController
 @RequestMapping("/api/files")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {
+    "http://localhost:3000",
+    "https://to-do-frontend.vercel.app"
+})
 public class FileController {
     private final CloudinaryService cloudinaryService;
 
