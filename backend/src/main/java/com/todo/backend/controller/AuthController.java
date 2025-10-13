@@ -8,7 +8,6 @@ import com.todo.backend.service.UserService;
 import com.todo.backend.security.JwtUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpSession;
@@ -20,13 +19,11 @@ import java.util.Optional;
 public class AuthController {
 
     private final UserService userService;
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public AuthController(UserService userService) {
         this.userService = userService;
     }
 
-    // ----------------- REGISTER -----------------
     @PostMapping("/register")
 public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
     if(request.getUsername() == null || request.getEmail() == null || request.getPassword() == null){
@@ -41,14 +38,13 @@ public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
     user.setUsername(request.getUsername());
     user.setEmail(request.getEmail());
     user.setRole(request.getRole() == null ? "USER" : request.getRole());
-    user.setPassword(request.getPassword()); // <-- plain text
+    user.setPassword(request.getPassword()); 
 
     User saved = userService.save(user);
     return ResponseEntity.ok(saved);
 }
 
 
-    // ----------------- LOGIN -----------------
     @PostMapping("/login")
 public ResponseEntity<?> login(@RequestBody LoginRequest request){
     Optional<User> opt = userService.findByUsername(request.getUsername());
@@ -59,7 +55,6 @@ public ResponseEntity<?> login(@RequestBody LoginRequest request){
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
     }
 
-    // Generate JWT
     String token = JwtUtil.generateToken(user.getUsername(), user.getRole());
 
     return ResponseEntity.ok(new LoginResponse(
@@ -72,7 +67,6 @@ public ResponseEntity<?> login(@RequestBody LoginRequest request){
 }
 
 
-    // ----------------- LOGOUT -----------------
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpSession session) {
         session.invalidate();

@@ -12,8 +12,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        String path = request.getRequestURI(); // use getRequestURI for full path
-        // Skip login, register, and tasks
+        String path = request.getRequestURI(); 
         return path.startsWith("/api/auth") || path.startsWith("/api/tasks") || path.startsWith("/api/users");
     }
 
@@ -23,7 +22,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        // This code only runs for endpoints NOT skipped
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {

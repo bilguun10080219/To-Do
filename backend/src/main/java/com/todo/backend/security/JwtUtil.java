@@ -9,7 +9,6 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 
 public class JwtUtil {
-    // Make sure the key is at least 256 bits (32 bytes)
     private static final String SECRET_KEY_STRING = "my-very-strong-secret-key-1234567890!";
     private static final SecretKey SECRET_KEY = Keys.hmacShaKeyFor(SECRET_KEY_STRING.getBytes());
     private static final long EXPIRATION_MS = 86400000; // 1 day
