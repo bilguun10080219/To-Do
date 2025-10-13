@@ -5,7 +5,7 @@ const BASE_URL = "http://localhost:8080/api/tasks";
 
 // Axios instance
 const api = axios.create({
-  baseURL: BASE_URL,
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
   headers: {
     "Content-Type": "application/json",
   },

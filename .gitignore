@@ -6,7 +6,6 @@ frontend/out
 frontend/build
 frontend/.pnp
 frontend/.yarn/*
-frontend/.env*
 
 # Backend / Java
 backend/target/
