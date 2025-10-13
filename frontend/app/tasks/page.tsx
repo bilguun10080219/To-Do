@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Layout from "../components/layout";
 import TaskList from "./components/TaskList";
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
-import { Task } from "@/app/mock/tasks";
+import { Status, Task } from "@/app/mock/tasks";
 import { getTasks, updateTask } from "@/app/services/taskApi";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
@@ -20,6 +20,7 @@ export default function TasksPage() {
   const [selectedUser, setSelectedUser] = useState("");
   const { t } = useTranslation();
   const [users, setUsers] = useState<User[]>([]);
+
 
   useEffect(() => {
     const user = localStorage.getItem("user");
@@ -48,7 +49,7 @@ export default function TasksPage() {
   const fetchTasks = async () => {
     try {
       let data;
-if (role?.toUpperCase() === "ADMIN") {
+      if (role?.toUpperCase() === "ADMIN") {
 
         if (selectedUser) {
           data = await getTasks(selectedUser, searchQuery);
@@ -73,11 +74,12 @@ if (role?.toUpperCase() === "ADMIN") {
   const handleDragEnd = async (result: DropResult) => {
     if (!result.destination) return;
 
+
     const { draggableId, destination } = result;
     const movedTask = tasks.find((t) => t.id.toString() === draggableId);
     if (!movedTask) return;
+    const newStatus = destination.droppableId as Status;
 
-    const newStatus = destination.droppableId;
     const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
 
     setTasks((prev) =>

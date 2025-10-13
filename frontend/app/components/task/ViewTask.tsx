@@ -9,7 +9,11 @@ import { Task } from "@/app/mock/tasks";
 import { deleteTask, getTaskById } from "@/app/services/taskApi";
 import { useTranslation } from "react-i18next";
 
-export default function ViewTask() {
+interface ViewTaskProps {
+  id: string;
+}
+
+export default function ViewTask({  }: ViewTaskProps) {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const [task, setTask] = useState<Task | null>(null);
