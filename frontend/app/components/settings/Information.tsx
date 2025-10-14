@@ -25,21 +25,30 @@ export default function Information({ user, onSubmit }: InformationProps) {
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await updateUser(user.username, username, email);
-      alert(t("Profile updated successfully!")); 
-      localStorage.setItem("user", JSON.stringify({ username, email }));
-      if (onSubmit) onSubmit({ username, email });
-    } catch (err: any) {
-      console.error(err);
-      alert(
-        t("Failed to update profile:") +
-          " " +
-          (err.response?.data || err.message)
-      ); 
-    }
-  };
+  e.preventDefault();
+  try {
+    const updatedUser = await updateUser(user.username, username, email);
+
+    const existing = JSON.parse(localStorage.getItem("user") || "{}");
+    const newUser = {
+      ...existing,
+      username: updatedUser.username,
+      email: updatedUser.email,
+    };
+
+    localStorage.setItem("user", JSON.stringify(newUser));
+
+    alert(t("Profile updated successfully!")); 
+    if (onSubmit) onSubmit({ username: updatedUser.username, email: updatedUser.email });
+  } catch (err: any) {
+    console.error(err);
+    alert(
+      t("Failed to update profile:") +
+        " " +
+        (err.response?.data || err.message)
+    ); 
+  }
+};
 
   return (
     <div className="w-full bg-white rounded-xl p-6 mb-6 shadow-md max-w-lg">

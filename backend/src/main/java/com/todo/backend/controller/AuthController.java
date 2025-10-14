@@ -25,12 +25,11 @@ public class AuthController {
 
     private final UserService userService;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
+    
     public AuthController(UserService userService) {
         this.userService = userService;
     }
 
-    // ----------------- REGISTER -----------------
     @PostMapping("/register")
 public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
     if(request.getUsername() == null || request.getEmail() == null || request.getPassword() == null){
@@ -52,7 +51,6 @@ public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
 }
 
 
-    // ----------------- LOGIN -----------------
     @PostMapping("/login")
 public ResponseEntity<?> login(@RequestBody LoginRequest request){
     Optional<User> opt = userService.findByUsername(request.getUsername());
@@ -77,7 +75,6 @@ public ResponseEntity<?> login(@RequestBody LoginRequest request){
 }
 
 
-    // ----------------- LOGOUT -----------------
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpSession session) {
         session.invalidate();

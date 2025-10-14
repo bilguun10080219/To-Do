@@ -2,9 +2,9 @@ import axios from "axios";
 
 // Base URL for tasks API
 const BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/users`;
+const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 
-// Axios instance
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
   headers: {
@@ -12,7 +12,6 @@ const api = axios.create({
   },
 });
 
-// Request interceptor to attach JWT token dynamically
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
@@ -21,8 +20,6 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-
-// --- API functions ---
 
 export const getTasks = (username?: string, search?: string) => {
   const params: Record<string, string> = {};
@@ -50,12 +47,11 @@ export const deleteTask = (id: number, username?: string) => {
   return api.delete(`/${id}`, { params }).then((res) => res.data);
 };
 
-// File upload with token automatically included
 export const uploadFile = async (file: File): Promise<string> => {
   const formData = new FormData();
   formData.append("file", file);
 
-  const res = await api.post("/upload", formData, {
+  const res = await axios.post(`${API_URL}/api/files/upload`, formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
 

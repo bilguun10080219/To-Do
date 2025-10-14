@@ -36,13 +36,18 @@ export default function Page() {
 
   useEffect(() => {
     const fetchUsers = async () => {
-      try {
-        const res = await axios.get(`${API_URL}/api/users`);
-        setUsers(res.data);
-      } catch (err) {
-        console.error("Failed to fetch users", err);
-      }
-    };
+  try {
+    const token = localStorage.getItem("token"); 
+    const res = await axios.get(`${API_URL}/api/users`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    setUsers(res.data);
+  } catch (err) {
+    console.error("Failed to fetch users", err);
+  }
+};
 
     if (role?.toUpperCase() === "ADMIN") fetchUsers();
   }, [role]);

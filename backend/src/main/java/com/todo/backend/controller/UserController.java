@@ -1,6 +1,7 @@
 package com.todo.backend.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +16,10 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = {
+    "http://localhost:3000",
+    "https://to-do-pi-ochre-94.vercel.app"
+})
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {

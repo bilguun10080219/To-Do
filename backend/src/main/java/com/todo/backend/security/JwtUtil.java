@@ -9,7 +9,6 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 
 public class JwtUtil {
-    // Make sure the key is at least 256 bits (32 bytes)
     private static final String SECRET_KEY_STRING = "my-very-strong-secret-key-1234567890!";
     private static final SecretKey SECRET_KEY = Keys.hmacShaKeyFor(SECRET_KEY_STRING.getBytes());
     private static final long EXPIRATION_MS = 86400000; // 1 day
@@ -44,11 +43,20 @@ public class JwtUtil {
                 .getBody();
     }
 
-    public static String getUsername(String token) {
-        return getClaims(token).getSubject();
-    }
+    public static String extractUsername(String token) {
+    return Jwts.parser()
+            .setSigningKey(SECRET_KEY)
+            .parseClaimsJws(token)
+            .getBody()
+            .getSubject();
+}
 
-    public static String getRole(String token) {
-        return (String) getClaims(token).get("role");
-    }
+public static String extractRole(String token) {
+    return Jwts.parser()
+            .setSigningKey(SECRET_KEY)
+            .parseClaimsJws(token)
+            .getBody()
+            .get("role", String.class);
+}
+
 }
