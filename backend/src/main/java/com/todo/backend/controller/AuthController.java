@@ -18,7 +18,7 @@ import java.util.Optional;
 @RequestMapping("/api/auth")
 @CrossOrigin(origins = {
     "http://localhost:3000",
-    "https://to-do-frontend.vercel.app"
+    "https://to-do-pi-ochre-94.vercel.app"
 })
 
 public class AuthController {
