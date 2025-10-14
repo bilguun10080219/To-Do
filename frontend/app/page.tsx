@@ -34,20 +34,23 @@ export default function Page() {
 
   const [users, setUsers] = useState<User[]>([]);
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-  try {
-    const token = localStorage.getItem("token"); 
-    const res = await axios.get(`${API_URL}/api/users`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    setUsers(res.data);
-  } catch (err) {
-    console.error("Failed to fetch users", err);
-  }
-};
+useEffect(() => {
+  const fetchUsers = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.warn("⚠️ No token found in localStorage!");
+        return;
+      }
+
+      const res = await axios.get(`${API_URL}/api/users`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setUsers(res.data);
+    } catch (err: any) {
+      console.error("❌ Failed to fetch users:", err.response?.status, err.response?.data || err);
+    }
+  };
 
     if (role?.toUpperCase() === "ADMIN") fetchUsers();
   }, [role]);
