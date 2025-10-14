@@ -43,11 +43,20 @@ public class JwtUtil {
                 .getBody();
     }
 
-    public static String getUsername(String token) {
-        return getClaims(token).getSubject();
-    }
+    public static String extractUsername(String token) {
+    return Jwts.parser()
+            .setSigningKey(SECRET_KEY)
+            .parseClaimsJws(token)
+            .getBody()
+            .getSubject();
+}
 
-    public static String getRole(String token) {
-        return (String) getClaims(token).get("role");
-    }
+public static String extractRole(String token) {
+    return Jwts.parser()
+            .setSigningKey(SECRET_KEY)
+            .parseClaimsJws(token)
+            .getBody()
+            .get("role", String.class);
+}
+
 }

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Task, Priority, Status } from "@/app/mock/tasks";
 import { createTask, uploadFile } from "@/app/services/taskApi";
+import { getUsers } from "@/app/services/userApi";
 import { useTranslation } from "react-i18next";
 
 interface AddTaskProps {
@@ -25,21 +26,15 @@ export default function AddTask({ onClose }: AddTaskProps) {
 
   useEffect(() => {
     const userStr = localStorage.getItem("user");
-    if (userStr) {
-      const user = JSON.parse(userStr);
-      setRole(user.role || "USER");
+    if (!userStr) return;
 
-      if ((user.role || "").toUpperCase() === "ADMIN") {
-        fetch("http://localhost:8080/api/users")
-          .then((res) => {
-            if (!res.ok) throw new Error(`Failed: ${res.status}`);
-            return res.json();
-          })
-          .then((data: any[]) => {
-            setUsers(data.map((u) => u.username));
-          })
-          .catch((err) => console.error("Failed to fetch users", err));
-      }
+    const user = JSON.parse(userStr);
+    setRole(user.role || "USER");
+
+    if ((user.role || "").toUpperCase() === "ADMIN") {
+      getUsers()
+        .then((data: any[]) => setUsers(data.map((u) => u.username)))
+        .catch((err) => console.error("Failed to fetch users", err));
     }
   }, []);
 
@@ -57,9 +52,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
     setLoading(true);
     try {
       let imageUrl: string | undefined = undefined;
-      if (image) {
-        imageUrl = await uploadFile(image);
-      }
+      if (image) imageUrl = await uploadFile(image);
 
       const newTask: Partial<Task> = {
         name: title,
@@ -74,9 +67,9 @@ export default function AddTask({ onClose }: AddTaskProps) {
 
       await createTask(newTask);
       onClose();
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      alert(t("Failed to add task"));
+      alert(t("Failed to add task") + ": " + (err.response?.data || err.message));
     } finally {
       setLoading(false);
     }
@@ -98,9 +91,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
 
         <div className="bg-[#FFFFFF] w-[794px] h-[476px] rounded-lg border border-gray-200 shadow p-8 space-y-6">
           <div>
-            <label className="block text-sm font-bold text-gray-600 mb-1">
-              {t("Title")}
-            </label>
+            <label className="block text-sm font-bold text-gray-600 mb-1">{t("Title")}</label>
             <input
               type="text"
               value={title}
@@ -110,9 +101,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-gray-600 mb-1">
-              {t("Date")}
-            </label>
+            <label className="block text-sm font-bold text-gray-600 mb-1">{t("Date")}</label>
             <input
               type="date"
               value={createdDate}
@@ -123,48 +112,28 @@ export default function AddTask({ onClose }: AddTaskProps) {
 
           <div className="flex gap-24">
             <div>
-              <label className="block text-sm font-bold text-gray-600 mb-2">
-                {t("Priority")}
-              </label>
+              <label className="block text-sm font-bold text-gray-600 mb-2">{t("Priority")}</label>
               <div className="flex gap-6">
-                <label className="flex items-center gap-2">
-                  <input
-                    type="radio"
-                    name="priority"
-                    value="Extremely"
-                    checked={priority === "Extremely"}
-                    onChange={() => setPriority("Extremely")}
-                  />
-                  <span className="text-red-600">{t("Extreme")}</span>
-                </label>
-                <label className="flex items-center gap-2">
-                  <input
-                    type="radio"
-                    name="priority"
-                    value="Moderate"
-                    checked={priority === "Moderate"}
-                    onChange={() => setPriority("Moderate")}
-                  />
-                  <span className="text-blue-600">{t("Moderate")}</span>
-                </label>
-                <label className="flex items-center gap-2">
-                  <input
-                    type="radio"
-                    name="priority"
-                    value="Low"
-                    checked={priority === "Low"}
-                    onChange={() => setPriority("Low")}
-                  />
-                  <span className="text-green-600">{t("Low")}</span>
-                </label>
+                {["Extremely", "Moderate", "Low"].map((p) => (
+                  <label key={p} className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="priority"
+                      value={p}
+                      checked={priority === p}
+                      onChange={() => setPriority(p as Priority)}
+                    />
+                    <span className={`text-${p === "Extremely" ? "red" : p === "Moderate" ? "blue" : "green"}-600`}>
+                      {t(p)}
+                    </span>
+                  </label>
+                ))}
               </div>
             </div>
 
             {role.toUpperCase() === "ADMIN" && (
               <div>
-                <label className="block text-sm font-bold text-gray-600 mb-2">
-                  {t("Assign to User")}
-                </label>
+                <label className="block text-sm font-bold text-gray-600 mb-2">{t("Assign to User")}</label>
                 <select
                   id="assignedUser"
                   value={assignedUser}
@@ -184,9 +153,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
 
           <div className="grid sm:grid-cols-2 gap-6 flex-1">
             <div>
-              <label className="block text-sm font-bold text-gray-600 mb-1">
-                {t("Task Description")}
-              </label>
+              <label className="block text-sm font-bold text-gray-600 mb-1">{t("Task Description")}</label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
@@ -195,9 +162,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
               />
             </div>
             <div>
-              <label className="block text-sm font-bold text-gray-600 mb-1">
-                {t("Upload Image")}
-              </label>
+              <label className="block text-sm font-bold text-gray-600 mb-1">{t("Upload Image")}</label>
               <div className="flex flex-col items-center justify-center border-2 border-dashed rounded-md p-6 text-gray-400">
                 {image ? (
                   <p>{image.name}</p>
@@ -207,16 +172,11 @@ export default function AddTask({ onClose }: AddTaskProps) {
                     <span className="my-2">{t("or")}</span>
                     <input
                       type="file"
-                      onChange={(e) =>
-                        setImage(e.target.files ? e.target.files[0] : null)
-                      }
+                      onChange={(e) => setImage(e.target.files ? e.target.files[0] : null)}
                       className="hidden"
                       id="fileUpload"
                     />
-                    <label
-                      htmlFor="fileUpload"
-                      className="cursor-pointer bg-gray-200 px-3 py-1 rounded hover:bg-gray-300"
-                    >
+                    <label htmlFor="fileUpload" className="cursor-pointer bg-gray-200 px-3 py-1 rounded hover:bg-gray-300">
                       {t("Browse")}
                     </label>
                   </>
