@@ -14,7 +14,7 @@ interface User {
 }
 
 export default function Page() {
-  const [role, setRole] = useState<string>("user");
+  const [role, setRole] = useState<string>("USER");
   const [selectedUser, setSelectedUser] = useState<string>("");
   const router = useRouter();
   const { t } = useTranslation(); 

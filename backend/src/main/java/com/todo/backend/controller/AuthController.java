@@ -18,14 +18,15 @@ import java.util.Optional;
 @RequestMapping("/api/auth")
 @CrossOrigin(origins = {
     "http://localhost:3000",
-    "https://to-do-pi-ochre-94.vercel.app"
+    "https://to-do-pi-ochre-94.vercel.app",
+    "https://to-do-330q.onrender.com"
 })
 
 public class AuthController {
 
     private final UserService userService;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    
+
     public AuthController(UserService userService) {
         this.userService = userService;
     }

@@ -25,25 +25,19 @@ export default function AddTask({ onClose }: AddTaskProps) {
   const { t } = useTranslation();
   const API_URL = process.env.NEXT_PUBLIC_API_URL
 
-  useEffect(() => {
-    const userStr = localStorage.getItem("user");
-    if (userStr) {
+useEffect(() => {
+  const userStr = localStorage.getItem("user");
+  if (userStr) {
     const user = JSON.parse(userStr);
     setRole(user.role || "USER");
 
     if ((user.role || "").toUpperCase() === "ADMIN") {
-     fetch(`${API_URL}/api/users`)
-          .then((res) => {
-            if (!res.ok) throw new Error(`Failed: ${res.status}`);
-            return res.json();
-          })
-          .then((data: any[]) => {
-            setUsers(data.map((u) => u.username));
-          })
+      getUsers()
+        .then((data: any[]) => setUsers(data.map((u: any) => u.username)))
         .catch((err) => console.error("Failed to fetch users", err));
     }
-    }
-  }, []);
+  }
+}, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
