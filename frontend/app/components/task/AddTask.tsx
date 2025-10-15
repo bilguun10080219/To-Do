@@ -42,6 +42,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+        console.log("currentUser:", currentUser);
         const assignedTo =
             role.toUpperCase() === "ADMIN" ? assignedUser : currentUser.username;
 
@@ -62,6 +63,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
                 createdDate,
                 status,
                 priority,
+                username: currentUser.username, 
                 description,
                 assignedUsername: role.toUpperCase() === "ADMIN" ? assignedUser : undefined,
                 imageUrl,
