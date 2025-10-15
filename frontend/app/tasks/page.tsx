@@ -36,18 +36,18 @@ export default function TasksPage() {
 
   useEffect(() => {
     const fetchUsers = async () => {
-  try {
-    const token = localStorage.getItem("token");
-    const res = await axios.get(`${API_URL}/api/users`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    setUsers(res.data);
-  } catch (err) {
-    console.error("Failed to fetch users", err);
-  }
-};
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get(`${API_URL}/api/users`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setUsers(res.data);
+      } catch (err) {
+        console.error("Failed to fetch users", err);
+      }
+    };
 
     if (role?.toUpperCase() === "ADMIN") fetchUsers();
   }, [role]);
@@ -63,8 +63,7 @@ export default function TasksPage() {
           data = await getTasks("", searchQuery);
         }
       } else {
-        const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
-        data = await getTasks(currentUser.username, searchQuery);
+        data = await getTasks(undefined, searchQuery);
       }
 
       setTasks(data);
@@ -100,7 +99,6 @@ export default function TasksPage() {
         description: movedTask.description,
         priority: movedTask.priority,
         status: newStatus,
-        username: currentUser.username,
         imageUrl: movedTask.imageUrl,
         createdDate: movedTask.createdDate,
       });
