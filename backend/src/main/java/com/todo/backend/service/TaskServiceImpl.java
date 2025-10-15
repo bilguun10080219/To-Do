@@ -24,6 +24,11 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public TaskResponse createTask(TaskRequest request, User assignedUser) {
+        System.out.println("🟢 [TaskServiceImpl] createTask() called");
+        System.out.println("   → username: " + request.getUsername());
+        System.out.println("   → assignedUsername: " + request.getAssignedUsername());
+        System.out.println("   → assignedUser: " + (assignedUser != null ? assignedUser.getUsername() : "NULL"));
+
         Task task = new Task();
         task.setName(request.getName());
         task.setDescription(request.getDescription());
@@ -32,7 +37,9 @@ public class TaskServiceImpl implements TaskService {
         task.setImageUrl(request.getImageUrl());
         task.setUser(assignedUser);
 
-        return toResponse(taskRepository.save(task));
+        Task saved = taskRepository.save(task);
+        System.out.println("✅ [TaskServiceImpl] task saved with id: " + saved.getId());
+        return toResponse(saved);
     }
 
     @Override
@@ -123,7 +130,8 @@ public class TaskServiceImpl implements TaskService {
     }
 
     private TaskResponse toResponse(Task task) {
-        if (task == null) return null;
+        if (task == null)
+            return null;
 
         TaskResponse response = new TaskResponse();
         response.setId(task.getId());

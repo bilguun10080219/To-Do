@@ -8,7 +8,8 @@ import { Status, Task } from "@/app/mock/tasks";
 import { getTasks, updateTask } from "@/app/services/taskApi";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
-import axios from "axios";
+import { getUsers } from "@/app/services/userApi";
+
 interface User {
   username: string;
 }
@@ -34,23 +35,13 @@ export default function TasksPage() {
     }
   }, [router]);
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get(`${API_URL}/api/users`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setUsers(res.data);
-      } catch (err) {
-        console.error("Failed to fetch users", err);
-      }
-    };
-
-    if (role?.toUpperCase() === "ADMIN") fetchUsers();
-  }, [role]);
+useEffect(() => {
+  if (role?.toUpperCase() === "ADMIN") {
+    getUsers()
+      .then((data) => setUsers(data))
+      .catch((err) => console.error("Failed to fetch users", err));
+  }
+}, [role]);
 
   const fetchTasks = async () => {
     try {
