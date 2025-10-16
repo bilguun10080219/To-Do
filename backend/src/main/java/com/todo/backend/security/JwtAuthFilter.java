@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -37,13 +38,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            logger.debug("[JwtAuthFilter] No Bearer token found for path: {}", request.getRequestURI());
             filterChain.doFilter(request, response);
             return;
         }
 
         String token = authHeader.substring(7);
-        logger.debug("[JwtAuthFilter] Token detected: {}", token.substring(0, Math.min(15, token.length())) + "...");
 
         try {
             if (JwtUtil.validateToken(token)) {
@@ -52,27 +51,25 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
                 logger.info("[JwtAuthFilter] Valid token for user: {} with role: {}", username, role);
 
+                var authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
+
+                User principal = new User(username, "", authorities);
                 UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(
-                                username, null,
-                                List.of(new SimpleGrantedAuthority("ROLE_" + role))
-                        );
+                        new UsernamePasswordAuthenticationToken(principal, null, authorities);
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+
                 logger.info("[JwtAuthFilter] Auth context set for user: {}", username);
                 logger.info("[JwtAuthFilter] SecurityContext: {}", SecurityContextHolder.getContext().getAuthentication());
             } else {
-                logger.warn("[JwtAuthFilter] Invalid or expired token for request: {}", request.getRequestURI());
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write("Invalid or expired token");
-                SecurityContextHolder.clearContext();
                 return;
             }
         } catch (Exception e) {
             logger.error("[JwtAuthFilter] Error validating JWT", e);
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Error validating token");
-            SecurityContextHolder.clearContext();
             return;
         }
 
