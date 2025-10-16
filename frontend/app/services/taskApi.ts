@@ -34,7 +34,10 @@ export const getTaskById = (id: number, username?: string) => {
   const params: Record<string, string> = {};
   if (username) params.username = username;
 
-  return api.get(`tasks/${id}`, { params }).then((res) => res.data);
+  return api.get(`tasks/${id}`, { params }).then((res) => res.data).catch(error => {
+    console.error('Config:', error.config);
+  });
+  ;
 };
 
 
