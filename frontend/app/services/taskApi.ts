@@ -4,7 +4,7 @@ import axios from "axios";
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const api = axios.create({
-  baseURL: `${API_URL}/api/tasks`,
+  baseURL: `${API_URL}/api`,
   headers: { "Content-Type": "application/json" },
 });
 
@@ -26,7 +26,7 @@ export const getTasks = (username?: string, search?: string) => {
   if (username) params.username = username;
   if (search) params.search = search;
 
-  return api.get("/", { params }).then((res) => res.data);
+  return api.get("tasks", { params }).then((res) => res.data);
 };
 
 
@@ -34,23 +34,23 @@ export const getTaskById = (id: number, username?: string) => {
   const params: Record<string, string> = {};
   if (username) params.username = username;
 
-  return api.get(`/${id}`, { params }).then((res) => res.data);
+  return api.get(`tasks/${id}`, { params }).then((res) => res.data);
 };
 
 
 export const createTask = (task: any) =>
-  api.post("/", task).then((res) => res.data);
+  api.post("tasks", task).then((res) => res.data);
 
 
 export const updateTask = (id: number, task: any) =>
-  api.put(`/${id}`, task).then((res) => res.data);
+  api.put(`tasks/${id}`, task).then((res) => res.data);
 
 
 export const deleteTask = (id: number, username?: string) => {
   const params: Record<string, string> = {};
   if (username) params.username = username;
 
-  return api.delete(`/${id}`, { params }).then((res) => res.data);
+  return api.delete(`tasks/${id}`, { params }).then((res) => res.data);
 };
 
 
