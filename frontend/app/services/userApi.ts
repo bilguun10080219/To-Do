@@ -40,6 +40,9 @@ export const updateUser = async (
   });
   const updatedUser = res.data;
 
+  if (updatedUser.token) {
+    localStorage.setItem("token", updatedUser.token);
+  }
 
   localStorage.setItem("user", JSON.stringify(updatedUser));
 
@@ -56,10 +59,13 @@ export const changePassword = async (
     currentPassword,
     newPassword,
   });
+  const changePassword = res.data;
 
-  if (res.data.token) {
-    localStorage.setItem("token", res.data.token);
+  if (changePassword.token) {
+    localStorage.setItem ("token", changePassword.token)
   }
 
-  return res.data;
+  localStorage.setItem("user", JSON.stringify(changePassword));
+
+  return changePassword;
 };

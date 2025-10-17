@@ -37,7 +37,7 @@ public class UserService {
         user.setEmail(newEmail);
         User updatedUser = userRepository.save(user);
 
-        String newToken = JwtUtil.generateToken(user.getUsername(), user.getRole());
+        String newToken = JwtUtil.generateToken(updatedUser.getUsername(), updatedUser.getRole());
 
         Map<String, Object> response = new HashMap<>();
         response.put("username", updatedUser.getUsername());
@@ -55,9 +55,9 @@ public class UserService {
         }
 
         user.setPassword(passwordEncoder.encode(newPassword));
-        userRepository.save(user);
+        User updatedUser = userRepository.save(user);
 
-        String newToken = JwtUtil.generateToken(user.getUsername(), user.getRole());
+        String newToken = JwtUtil.generateToken(updatedUser.getUsername(), updatedUser.getRole());
 
 
         Map<String, Object> response = new HashMap<>();
