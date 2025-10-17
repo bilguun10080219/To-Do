@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @CrossOrigin(origins = {
-    "http://localhost:3000",
-    "https://to-do-pi-ochre-94.vercel.app",
-    "https://to-do-330q.onrender.com"
+        "http://localhost:3000",
+        "https://to-do-pi-ochre-94.vercel.app",
+        "https://to-do-330q.onrender.com"
 })
 @RestController
 @RequestMapping("/api/tasks")
@@ -67,9 +67,7 @@ public class TaskController {
         }
     }
 
-    // =========================
-    // GET TASKS
-    // =========================
+
     @GetMapping
     public ResponseEntity<?> getTasks(
             @RequestParam(required = false) String username,
@@ -113,9 +111,40 @@ public class TaskController {
         }
     }
 
-    // =========================
-    // UPDATE TASK
-    // =========================
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getTaskById(@PathVariable Long id, Authentication authentication) {
+        logger.info("=== [GET] /api/tasks/{} - getTaskById called ===", id);
+
+        String currentUsername = authentication.getName();
+        logger.info("Authenticated username: {}", currentUsername);
+
+        User requester = userService.findByUsername(currentUsername)
+                .orElseThrow(() -> new RuntimeException("Requester not found"));
+
+        try {
+            TaskResponse task = taskService.getTaskById(id, requester);
+            logger.info("Fetched task: {}", task);
+
+            // USER өөрийн task-аа л үзнэ
+            if (!"ADMIN".equalsIgnoreCase(requester.getRole()) &&
+                    !task.getAssignedUsername().equalsIgnoreCase(requester.getUsername())) {
+                logger.warn("User {} tried to view task {} without permission", requester.getUsername(), id);
+                return ResponseEntity.status(403).body("You do not have permission to view this task");
+            }
+
+            return ResponseEntity.ok(task);
+
+        } catch (RuntimeException e) {
+            logger.warn("Task not found: {}", e.getMessage());
+            return ResponseEntity.status(404).body("Task not found");
+        } catch (Exception e) {
+            logger.error("Error fetching task", e);
+            return ResponseEntity.status(500).body("Error fetching task: " + e.getMessage());
+        }
+    }
+
+
     @PutMapping("/{id}")
     public ResponseEntity<?> updateTask(@PathVariable Long id, @RequestBody TaskRequest request, Authentication authentication) {
         logger.info("=== [PUT] /api/tasks/{} - updateTask called ===", id);
@@ -147,9 +176,7 @@ public class TaskController {
         }
     }
 
-    // =========================
-    // DELETE TASK
-    // =========================
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteTask(@PathVariable Long id, Authentication authentication) {
         logger.info("=== [DELETE] /api/tasks/{} - deleteTask called ===", id);
