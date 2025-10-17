@@ -20,6 +20,12 @@ const STATUS_COLORS: Record<string, string> = {
 
 const STATUS_ORDER = ["COMPLETED", "IN_PROGRESS", "PENDING"];
 
+const STATUS_LABELS: Record<string, string> = {
+  COMPLETED: "Completed",
+  IN_PROGRESS: "In Progress",
+  PENDING: "PENDING",
+};
+
 export default function TaskStatus({
   size = 120,
   strokeWidth = 10,
@@ -34,7 +40,9 @@ export default function TaskStatus({
 
     const user = JSON.parse(storedUser);
     const usernameParam =
-      user.role?.toUpperCase() === "ADMIN" ? selectedUser || undefined : user.username;
+        user.role?.toUpperCase() === "ADMIN"
+        ? selectedUser || undefined
+        : user.username;
 
     getTasks(usernameParam)
       .then((data: Task[]) => {
@@ -114,7 +122,7 @@ export default function TaskStatus({
                 </text>
               </svg>
               <span className="mt-2 text-sm text-gray-700">
-                {t(status.replace("_", " "))}
+                {t(STATUS_LABELS[status])}
               </span>
             </div>
           );

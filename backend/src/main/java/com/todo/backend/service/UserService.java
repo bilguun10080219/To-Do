@@ -4,9 +4,8 @@ import com.todo.backend.entity.User;
 import com.todo.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
-import java.util.List;
-import java.util.Optional;
+import com.todo.backend.security.JwtUtil;
+import java.util.*;
 
 @Service
 public class UserService {
@@ -30,17 +29,26 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User updateUser(String currentUsername, String newUsername, String newEmail) {
+    public Map<String, Object> updateUser(String currentUsername, String newUsername, String newEmail) {
         User user = userRepository.findByUsername(currentUsername)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
         user.setUsername(newUsername);
         user.setEmail(newEmail);
-        return userRepository.save(user);
+        User updatedUser = userRepository.save(user);
+
+        String newToken = JwtUtil.generateToken(user.getUsername(), user.getRole());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("username", updatedUser.getUsername());
+        response.put("email", updatedUser.getEmail());
+        response.put("token", newToken);
+        return response;
     }
 
-    public void changePassword(String username, String currentPassword, String newPassword) {
+    public Map<String, Object> changePassword(String username, String currentPassword, String newPassword) {
         User user = userRepository.findByUsername(username)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
             throw new RuntimeException("Current password is incorrect");
@@ -48,5 +56,13 @@ public class UserService {
 
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
+
+        String newToken = JwtUtil.generateToken(user.getUsername(), user.getRole());
+
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Password changed successfully");
+        response.put("token", newToken);
+        return response;
     }
 }

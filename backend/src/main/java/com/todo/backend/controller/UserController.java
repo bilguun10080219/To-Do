@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/users")
@@ -46,10 +46,14 @@ public class UserController {
             return ResponseEntity.status(403).body("Access denied: Cannot update other user");
         }
 
-        User updated = userService.updateUser(request.getUsername(), request.getNewUsername(), request.getNewEmail());
-        updated.setPassword(null); 
-        return ResponseEntity.ok(updated);
-    }
+    Map<String, Object> updatedData = userService.updateUser(
+        request.getUsername(),
+        request.getNewUsername(),
+        request.getNewEmail()
+    );
+
+    return ResponseEntity.ok(updatedData);
+}
 
    
     @PutMapping("/change-password")
@@ -59,8 +63,13 @@ public class UserController {
         if (!requester.equals(request.getUsername())) {
             return ResponseEntity.status(403).body("Access denied: Cannot change password for other user");
         }
+        Map<String, Object> response = userService.changePassword(
+        request.getUsername(),
+        request.getCurrentPassword(),
+        request.getNewPassword()
+    );
 
-        userService.changePassword(request.getUsername(), request.getCurrentPassword(), request.getNewPassword());
-        return ResponseEntity.ok("Password updated successfully");
+    return ResponseEntity.ok(response);
+
     }
 }
