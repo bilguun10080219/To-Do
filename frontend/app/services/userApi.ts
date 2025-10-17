@@ -16,30 +16,50 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-export const getUsers = () =>
-  api.get("users").then((res) => res.data);
+export const getUsers = async () => {
+  const res = await api.get("users");
+  return res.data;
+};
 
-export const updateUser = (
+export const getUser = async (username?: string) => {
+  const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+  const targetUsername = username || storedUser.username;
+  const res = await api.get(`users/${targetUsername}`);
+  return res.data;
+};
+
+export const updateUser = async (
   username: string,
   newUsername: string,
   newEmail: string
-) =>
-  api
-    .put("users/update", { username, newUsername, newEmail })
-    .then((res) => res.data);
+) => {
+  const res = await api.put("users/update", {
+    username,
+    newUsername,
+    newEmail,
+  });
+  const updatedUser = res.data;
 
-export const changePassword = (
+
+  localStorage.setItem("user", JSON.stringify(updatedUser));
+
+  return updatedUser;
+};
+
+export const changePassword = async (
   username: string,
   currentPassword: string,
   newPassword: string
-) =>
-  api
-    .put("users/change-password", {
-      username,
-      currentPassword,
-      newPassword,
-    })
-    .then((res) => res.data);
+) => {
+  const res = await api.put("users/change-password", {
+    username,
+    currentPassword,
+    newPassword,
+  });
 
-export const getUser = (username: string) =>
-  api.get(`users/${username}`).then((res) => res.data);
+  if (res.data.token) {
+    localStorage.setItem("token", res.data.token);
+  }
+
+  return res.data;
+};
