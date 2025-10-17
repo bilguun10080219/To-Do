@@ -164,7 +164,7 @@ i18n.use(initReactI18next).init({
                 settings: "設定",
                 logout: "ログアウト",
                 login: "ログイン",
-                "Welcome back": "お帰りなさい",
+                "Welcome back": "ようこそ",
                 Dashboard: "ダッシュボード",
                 Tasks: "タスク",
                 "Task Categories": "カテゴリー",
@@ -178,9 +178,9 @@ i18n.use(initReactI18next).init({
                 // --- Tasks Page / Admin Panel ---
                 "Admin Panel": "管理パネル",
                 "Select a user": "ユーザーを選択",
-                "Add New Task": "新しいタスクを追加",
+                "Add New Task": "新タスク追加",
                 "No tasks here": "タスクはありません",
-                "All Tasks": "すべてのタスク",
+                "All Tasks": "全タスク",
                 "Viewing": "表示中",
                 "Loading tasks...": "タスクを読み込み中...",
                 "No tasks found": "タスクが見つかりません",
@@ -211,17 +211,17 @@ i18n.use(initReactI18next).init({
                 "Not Completed": "未完了",
 
                 // --- Task Status Chart ---
-                "Task Status": "タスクの状況",
+                "Task Status": "タスク状況",
                 PENDING: "保留中",
                 IN_PROGRESS: "進行中",
                 COMPLETED: "完了",
 
                 // --- Settings ---
-                "Change Password": "パスワードを変更",
+                "Change Password": "パスワード変更",
                 "General Settings": "一般設定",
-                "Current Password": "現在のパスワード",
-                "New Password": "新しいパスワード",
-                "Confirm Password": "パスワードの確認",
+                "Current Password": "現パスワード",
+                "New Password": "新パスワード",
+                "Confirm Password": "パスワード確認",
                 "Update Password": "パスワードを更新",
                 Cancel: "キャンセル",
                 "Save Changes": "変更を保存",
@@ -236,7 +236,7 @@ i18n.use(initReactI18next).init({
                 Email: "メールアドレス",
 
                 // ===== Categories Page =====
-                "Add Category": "カテゴリーを追加",
+                "Add Category": "カテゴリー追加",
                 "Create Categories": "カテゴリーを作成",
                 "Category Name": "カテゴリー名",
                 "Enter category name": "カテゴリー名を入力",
@@ -263,7 +263,7 @@ i18n.use(initReactI18next).init({
                 // ===== Category Cards =====
                 "Add Task Status Button": "状態を追加",
                 "Task Priority": "優先度",
-                "Add New Priority": "新しい優先度を追加",
+                "Add New Priority": "新優先度追加",
                 "Are you sure you want to delete": "本当に削除しますか",
 
                 // ===== Example Task Statuses =====
